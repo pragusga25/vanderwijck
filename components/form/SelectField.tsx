@@ -39,3 +39,29 @@ export const SelectField: React.FC<{
     </div>
   );
 };
+
+
+export const SelectFieldCategory: React.FC<{
+    register: UseFormRegister<FieldValues>;
+    placeHolder?: string;
+    value?: string;
+    disabled?: boolean;
+    className?: string;
+    choices: SelectObject[];
+  }> = ({  register, className, choices }) => {
+    return (
+      <div className={className}>
+        <select
+          className=" w-full rounded-sm bg-gray-100 p-2 ring-1 ring-black focus:outline-none"
+          {...register('categoryId')}
+        >
+          <option value="">Select...</option>
+          {choices.map((obj,idx) => (
+            <option key={"option-"+idx} selected={!!obj.isSelected} value={obj.value}>
+              {obj.text ?? obj.value}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };

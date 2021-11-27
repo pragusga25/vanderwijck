@@ -4,31 +4,40 @@ import { TextField } from './TextField';
 import { SelectField } from './SelectField';
 
 export default function Form() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, getValues } = useForm();
   const [result, setResult] = useState('');
   const [item, setItem] = useState<any[][]>([[]]);
-  const onSubmit = (data) => setResult(JSON.stringify(data));
+
+  function handleBook(){
+    console.log("On Book")
+    console.log(getValues('e'))
+  }
+
+  function handleSend(){
+    console.log("On Send")
+    console.log(getValues('e'))
+  }
 
   return (
     <div className="w-full border-black mt-8">
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form>
         <div className="flex flex-wrap gap-x-6">
           <TextField
             register={register}
             fieldLabel="Project No:"
-            fieldName="projectNo"
+            fieldName="e.projectNo"
             className="md:w-52 lg:w-64 text-lg"
           />
           <TextField
             register={register}
             fieldLabel="Requested By:"
-            fieldName="requestedBy"
+            fieldName="e.requestedBy"
             className="md:w-52  lg:w-64 text-lg"
           />
           <TextField
             register={register}
             fieldLabel="Approved By:"
-            fieldName="approvedBy"
+            fieldName="e.approvedBy"
             className="md:w-52  lg:w-64 text-lg"
           />
         </div>
@@ -36,17 +45,20 @@ export default function Form() {
         {item.map((e, idx) => (
           <Material register={register} no={++idx} />
         ))}
-        <div className="flex justify-between mt-12">
+        <div className="flex items-center justify-between mt-12">
           <img
             src="/role/add.png"
             alt=""
             onClick={() => setItem(item.concat([[]]))}
             className="w-10 h-10 md:w-16 md:h-16 cursor-pointer transform ease-in-out duration-300 hover:scale-110"
           />
-          <input
-            type="submit"
-            className="px-6 outline-none cursor-pointer font-medium transform ease-in-out duration-500 hover:bg-blue-venice text-white rounded-2xl py-1.5 sm:px-8 sm:py-2 lg:px-12 lg:py-4 bg-blue-astronaut"
-          />
+          <div className="flex gap-x-3 md:gap-x-6">
+            <div onClick={handleBook} className="flex justify-center items-center px-6 outline-none cursor-pointer font-medium transform ease-in-out duration-500 hover:bg-gray-400 text-white rounded-2xl py-1 sm:px-6 sm:py-1.5 lg:px-9 lg:py-2 bg-gray-500">Book</div>
+            <div
+            onClick={handleSend}
+              className="flex justify-center items-center px-6 outline-none cursor-pointer font-medium transform ease-in-out duration-500 hover:bg-blue-venice text-white rounded-2xl py-1 sm:px-6 sm:py-1.5 lg:px-9 lg:py-2 bg-blue-astronaut"
+            >Send</div>
+          </div>
         </div>
         <p>{result}</p>
       </form>
@@ -60,14 +72,13 @@ const Material: React.FC<{
   return (
     <div>
       <h1 className="font-bold mt-8 text-xl md:text-2xl lg:text-4xl">
-        Material {no}
-      </h1>
+        Material {no}  </h1>
       <div className="grid grid-cols-12 my-2">
         <div className="col-span-12 md:col-span-8">
           <TextField
             register={register}
             fieldLabel="Item name:"
-            fieldName={`material-${no}-item-name`}
+            fieldName={`e.material-${no}.item-name`}
             className=" w-full text-lg"
           />
         </div>
@@ -76,7 +87,7 @@ const Material: React.FC<{
           <TextField
             register={register}
             fieldLabel="Qty:"
-            fieldName={`material-${no}-qty`}
+            fieldName={`e.material-${no}.qty`}
             className="w-full text-lg"
           />
         </div>
@@ -85,7 +96,7 @@ const Material: React.FC<{
           <TextField
             register={register}
             fieldLabel="Avl:"
-            fieldName={`material-${no}-avl`}
+            fieldName={`e.material-${no}.avl`}
             className="w-full text-lg"
           />
         </div>
@@ -95,7 +106,7 @@ const Material: React.FC<{
           <TextField
             register={register}
             fieldLabel="Remarks:"
-            fieldName={`material-${no}-remarks`}
+            fieldName={`e.material-${no}.remarks`}
             className="w-full text-lg"
           />
         </div>
@@ -104,7 +115,7 @@ const Material: React.FC<{
           <TextField
             register={register}
             fieldLabel="Subcode:"
-            fieldName={`material-${no}-subcode`}
+            fieldName={`e.material-${no}.subcode`}
             className="w-full text-lg"
           />
         </div>

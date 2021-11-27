@@ -117,9 +117,9 @@ const DropDown: React.FC<{ active: roleType }> = ({ active }) => {
   const data = ['project', 'logistics', 'purchasing'];
   const slug = ['project', 'material-logistics', 'purchasing'];
   const res = data.map((e, i) => {
-    if (e == active) return <></>;
+    if (e == active) return <div key={"dropdown-"+i}></div>;
     return (
-      <Link href={'/role/' + slug[i]}>
+      <Link key={"dropdown-"+i} href={'/role/' + slug[i]}>
         <div
           style={{ borderTop: '2px solid white' }}
           className="text-white capitalize sm:text-xl pl-4 sm:pl-0 sm:pr-4 md:pr-5 md:text-2xl py-1.5"

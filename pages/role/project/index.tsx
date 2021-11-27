@@ -68,7 +68,7 @@ export default function Home() {
       slug={[
         'project/good-issue',
         'project/material-request',
-        'project/status',
+        'project/status/material-request',
       ]}
     />
   );
