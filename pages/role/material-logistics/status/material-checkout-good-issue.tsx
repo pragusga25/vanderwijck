@@ -5,16 +5,15 @@ import { useRouter } from 'next/router';
 // import {Bg} from "@components/general/button"
 import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import { ProjectStatusData } from '@components/Project/ProjectTable';
-import ProjectStatusTable from '@components/Project/ProjectTable';
-import ProjectNavigation from '@components/Project/ProjectNavigation';
+import LogisticsMaterialCheckout, {LogisticsMaterialCheckoutData} from '@components/Logistics/Table/LogisticsMaterialCheckOutTable';
+
 export default function Page() {
   const router = useRouter();
   return (
     <Layout
       colorType="white"
       withDropDown
-      active="project"
+      active="logistics"
       message="ROLE PAGE"
       isLanding={false}
     >
@@ -23,49 +22,45 @@ export default function Page() {
           <BackButton
             message=""
             customClassName="font-bold px-4 py-3 text-black"
-            onClick={() => router.push('/role/project')}
+            onClick={() => router.push('/role/material-logistics')}
           />
           <h1 className="ml-4 text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
-            Status
+            Material Checkout - Good Issue
           </h1>
-          <ProjectNavigation />
         </div>
-        <h1 className="font-bold text-2xl mt-10 mb-16 xl:text-4xl">Material Request</h1>
-        <ProjectStatusTable data={DummyData} />
+        <h1 className="font-bold text-2xl mt-10 mb-16 xl:text-4xl">Status</h1>
+        <LogisticsMaterialCheckout data={DummyData} />
       </div>
     </Layout>
   );
 }
 
-const DummyData: ProjectStatusData[] = [
+const DummyData: LogisticsMaterialCheckoutData[] = [
   {
     projectNo: '1',
     transactionNumber: '123',
     itemName: 'kucing',
-    subcode: '12345',
-    qty: '12',
-    unit: '120',
-    approvedBy: 'ayam',
+    status: 'sukses',
+
+  },
+  {
+    projectNo: '32',
+    transactionNumber: '123',
+    itemName: 'kucing',
+    status: 'sukses',
+    
+  },
+  {
+    projectNo: '12',
+    transactionNumber: '123',
+    itemName: 'kucing',
     status: 'sukses',
   },
   {
-    projectNo: '1',
+    projectNo: '29',
     transactionNumber: '123',
     itemName: 'kucing',
-    subcode: '12345',
-    qty: '12',
-    unit: '120',
-    approvedBy: 'ayam',
     status: 'sukses',
-  },
-  {
-    projectNo: '1',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    subcode: '12345',
-    qty: '12',
-    unit: '120',
-    approvedBy: 'ayam',
-    status: 'sukses',
+    
   },
 ];

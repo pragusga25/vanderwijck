@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-export interface BookedGoodData {
+export interface ProjectBookedGoodData {
   date: string;
   projectNo: string;
   category: string;
@@ -11,9 +11,9 @@ export interface BookedGoodData {
   unit: string;
 }
 const BookedGoodTable: React.FC<{
-  data: BookedGoodData[];
-  onIssue: (x: BookedGoodData) => void;
-  onCancel: (x: BookedGoodData) => void;
+  data: ProjectBookedGoodData[];
+  onIssue: (x: ProjectBookedGoodData) => void;
+  onCancel: (x: ProjectBookedGoodData) => void;
 }> = ({ data, onIssue, onCancel }) => {
   return (
     <div
@@ -47,16 +47,16 @@ const BookedGoodTable: React.FC<{
 export default BookedGoodTable;
 
 const Row: React.FC<{
-  onIssue: (x: BookedGoodData) => void;
-  onCancel: (x: BookedGoodData) => void;
-  e: BookedGoodData;
+  onIssue: (x: ProjectBookedGoodData) => void;
+  onCancel: (x: ProjectBookedGoodData) => void;
+  e: ProjectBookedGoodData;
 }> = ({ onCancel, onIssue, e }) => {
   const { register, getValues } = useForm();
   const handleIssue = () => {
-    onIssue(getValues('e') as BookedGoodData);
+    onIssue(getValues('e') as ProjectBookedGoodData);
   };
   const handleCancel = () => {
-    onCancel(getValues('e') as BookedGoodData);
+    onCancel(getValues('e') as ProjectBookedGoodData);
   };
   return (
     <tr className="break-all">

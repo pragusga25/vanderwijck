@@ -5,9 +5,9 @@ import { useRouter } from 'next/router';
 // import {Bg} from "@components/general/button"
 import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import { ProjectStatusData } from '@components/project/Table';
-import StatusTable from '@components/project/Table';
-import Navigation from '@components/project/Navigation';
+import { ProjectStatusData } from '@components/Project/ProjectTable';
+import ProjectStatusTable from '@components/Project/ProjectTable';
+import ProjectNavigation from '@components/Project/ProjectNavigation';
 export default function Page() {
   const router = useRouter();
   return (
@@ -28,10 +28,10 @@ export default function Page() {
           <h1 className="ml-4 text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
             Status
           </h1>
-          <Navigation />
+          <ProjectNavigation />
         </div>
         <h1 className="font-bold text-2xl mt-10 mb-16 xl:text-4xl">Good Issue</h1>
-        <StatusTable data={DummyData} />
+        <ProjectStatusTable data={DummyData} />
       </div>
     </Layout>
   );

@@ -5,10 +5,10 @@ import { useRouter } from 'next/router';
 // import {Bg} from "@components/general/button"
 import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import CategorySearchBar, { CategoryProps } from '@components/project/CategorySearchBar';
+import ProjectCategorySearchBar, { ProjectCategoryProps } from '@components/Project/ProjectCategorySearchBar';
 import { useState } from 'react';
 import Link from 'next/link';
-import BookedGoodTable, {BookedGoodData} from '@components/project/BookedGoodTable';
+import ProjectBookedGoodTable, {ProjectBookedGoodData} from '@components/Project/ProjectBookedGoodTable';
 
 export default function Page() {
   const router = useRouter();
@@ -16,11 +16,11 @@ export default function Page() {
     console.log(data)
     setData(DummyBookedGoodData)
   }
-  function dummyOnIssue(x: BookedGoodData){
+  function dummyOnIssue(x: ProjectBookedGoodData){
       console.log("On issue")
       console.log(x)
   }
-  function dummyOnCancel(x: BookedGoodData){
+  function dummyOnCancel(x: ProjectBookedGoodData){
     console.log("On Cancel")
     console.log(x)
 }
@@ -50,16 +50,16 @@ export default function Page() {
             </Link>
         </div>
         <div className="h-16"></div>
-      <CategorySearchBar data={DummyCategoryData} onSearch={dummyOnSearch} />
+      <ProjectCategorySearchBar data={DummyCategoryData} onSearch={dummyOnSearch} />
       <div className="h-16"></div>
-        {!!data && <BookedGoodTable data={data} onIssue={dummyOnIssue} onCancel={dummyOnCancel} />}
+        {!!data && <ProjectBookedGoodTable data={data} onIssue={dummyOnIssue} onCancel={dummyOnCancel} />}
       <div className="h-10"></div>
       </div>
     </Layout>
   );
 }
 
-const DummyBookedGoodData: BookedGoodData[]=[
+const DummyBookedGoodData: ProjectBookedGoodData[]=[
     {
         date:"22/13/2002",
         projectNo:"123",
@@ -92,7 +92,7 @@ const DummyBookedGoodData: BookedGoodData[]=[
     }
 ]
 
-const DummyCategoryData: CategoryProps[]=[
+const DummyCategoryData: ProjectCategoryProps[]=[
   {
     categoryName:"Pipe",
     categoryId:"1"

@@ -5,16 +5,14 @@ import { useRouter } from 'next/router';
 // import {Bg} from "@components/general/button"
 import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import { ProjectStatusData } from '@components/Project/ProjectTable';
-import ProjectStatusTable from '@components/Project/ProjectTable';
-import ProjectNavigation from '@components/Project/ProjectNavigation';
+import LogisticsPurchaseRequest, {LogisticsPurchaseRequestData} from '@components/Logistics/Table/LogisticsPurchaseRequest';
 export default function Page() {
   const router = useRouter();
   return (
     <Layout
       colorType="white"
       withDropDown
-      active="project"
+      active="logistics"
       message="ROLE PAGE"
       isLanding={false}
     >
@@ -23,49 +21,39 @@ export default function Page() {
           <BackButton
             message=""
             customClassName="font-bold px-4 py-3 text-black"
-            onClick={() => router.push('/role/project')}
+            onClick={() => router.push('/role/material-logistics')}
           />
           <h1 className="ml-4 text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
-            Status
+            Purchase Request
           </h1>
-          <ProjectNavigation />
         </div>
-        <h1 className="font-bold text-2xl mt-10 mb-16 xl:text-4xl">Material Request</h1>
-        <ProjectStatusTable data={DummyData} />
+        <h1 className="font-bold text-2xl mt-10 mb-16 xl:text-4xl">Status</h1>
+        <LogisticsPurchaseRequest data={DummyData} />
       </div>
     </Layout>
   );
 }
 
-const DummyData: ProjectStatusData[] = [
+const DummyData: LogisticsPurchaseRequestData[] = [
   {
     projectNo: '1',
     transactionNumber: '123',
     itemName: 'kucing',
-    subcode: '12345',
-    qty: '12',
-    unit: '120',
-    approvedBy: 'ayam',
-    status: 'sukses',
+    purchaseRequestNumber:"XXX-XXXX",
+    status:"Sukses"
   },
   {
     projectNo: '1',
     transactionNumber: '123',
     itemName: 'kucing',
-    subcode: '12345',
-    qty: '12',
-    unit: '120',
-    approvedBy: 'ayam',
-    status: 'sukses',
+    purchaseRequestNumber:"XXX-XXXX",
+    status:"Sukses"
   },
   {
     projectNo: '1',
     transactionNumber: '123',
     itemName: 'kucing',
-    subcode: '12345',
-    qty: '12',
-    unit: '120',
-    approvedBy: 'ayam',
-    status: 'sukses',
+    purchaseRequestNumber:"XXX-XXXX",
+    status:"Sukses"
   },
 ];

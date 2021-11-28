@@ -1,13 +1,13 @@
-import { SelectFieldCategory } from '@components/form/SelectField';
-import { TextField } from '@components/form/TextField';
+import { SelectFieldCategory } from '@components/general/form/SelectField';
+import { TextField } from '@components/general/form/TextField';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-export interface CategoryProps {
+export interface ProjectCategoryProps {
   categoryId?: string;
   categoryName: string;
 }
-const CategorySearchBar: React.FC<{ data: CategoryProps[], onSearch: any }> = ({ data, onSearch }) => {
+const CategorySearchBar: React.FC<{ data: ProjectCategoryProps[], onSearch: any }> = ({ data, onSearch }) => {
   const { register, handleSubmit } = useForm();
   return (
     <form onSubmit={handleSubmit(onSearch)}>

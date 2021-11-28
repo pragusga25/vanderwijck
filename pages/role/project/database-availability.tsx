@@ -5,9 +5,9 @@ import { useRouter } from 'next/router';
 // import {Bg} from "@components/general/button"
 import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import CategorySearchBar, { CategoryProps } from '@components/project/CategorySearchBar';
+import ProjectCategorySearchBar, { ProjectCategoryProps } from '@components/Project/ProjectCategorySearchBar';
 import { useState } from 'react';
-import ItemCard, { ItemCardProps } from '@components/project/ItemCard';
+import ProjectItemCard, { ProjectItemCardProps } from '@components/Project/ProjectItemCard';
 
 export default function Page() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function Page() {
     console.log(data)
     setData(DummyItemcardData)
   }
-  const [data, setData] = useState<ItemCardProps>(null)
+  const [data, setData] = useState<ProjectItemCardProps>(null)
   return (
     <Layout
       colorType="white"
@@ -36,15 +36,15 @@ export default function Page() {
           </h1>
         </div>
         <div className="h-16"></div>
-      <CategorySearchBar data={DummyCategoryData} onSearch={dummyOnSearch} />
+      <ProjectCategorySearchBar data={DummyCategoryData} onSearch={dummyOnSearch} />
       <div className="h-10"></div>
-      {!!data && <ItemCard {...data} />}
+      {!!data && <ProjectItemCard {...data} />}
       </div>
     </Layout>
   );
 }
 
-const DummyItemcardData: ItemCardProps = {
+const DummyItemcardData: ProjectItemCardProps = {
   itemName:"Pipe Seamless Carbon steel",
   itemCode:"XXXX-XXXX-XXXX",
   avl: "8",
@@ -59,7 +59,7 @@ const DummyItemcardData: ItemCardProps = {
   ]
 }
 
-const DummyCategoryData: CategoryProps[]=[
+const DummyCategoryData: ProjectCategoryProps[]=[
   {
     categoryName:"Pipe",
     categoryId:"1"

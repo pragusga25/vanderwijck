@@ -1,21 +1,21 @@
 import React from 'react';
 
-export interface ItemLogProps {
+export interface ProjectItemLogProps {
   date: string;
   projectNo: string;
   qty: string;
   status: string;
 }
 
-export interface ItemCardProps {
+export interface ProjectItemCardProps {
   itemName: string;
   itemCode: string;
   qty: string;
   avl: string;
-  itemLogs: ItemLogProps[];
+  itemLogs: ProjectItemLogProps[];
 }
 
-const ItemCard: React.FC<ItemCardProps> = ({
+const ItemCard: React.FC<ProjectItemCardProps> = ({
   itemName,
   itemCode,
   itemLogs,

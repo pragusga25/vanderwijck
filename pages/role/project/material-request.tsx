@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 // import {Bg} from "@components/general/button"
 import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import MaterialRequestForm from '@components/form/MaterialRequestForm';
+import MaterialRequestForm from '@components/general/form/MaterialRequestForm';
 export default  function Page() {
   const router = useRouter();
   return (
