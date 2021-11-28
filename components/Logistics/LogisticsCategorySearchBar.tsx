@@ -3,18 +3,19 @@ import { TextField } from '@components/general/form/TextField';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-export interface ProjectCategoryData {
+export interface LogisticsCategoryData {
   categoryId?: string;
   categoryName: string;
 }
-const CategorySearchBar: React.FC<{ data: ProjectCategoryData[], onSearch: any }> = ({ data, onSearch }) => {
+
+const LogisticsCategorySearchBar: React.FC<{ data: LogisticsCategoryData[], onSearch: any }> = ({ data, onSearch }) => {
   const { register, handleSubmit } = useForm();
   return (
     <form onSubmit={handleSubmit(onSearch)}>
     <div className="flex">
         <SelectFieldCategory
           register={register}
-          className="md:w-40 lg:w-52"
+          className="md:w-28 lg:w-36"
           choices={data.map((e) => {
             return {
               text: e.categoryName,
@@ -34,4 +35,4 @@ const CategorySearchBar: React.FC<{ data: ProjectCategoryData[], onSearch: any }
     </form>
   );
 };
-export default CategorySearchBar;
+export default LogisticsCategorySearchBar;

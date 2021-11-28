@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 // import {Bg} from "@components/general/button"
 import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import LogisticsPurchaseRequest, {LogisticsPurchaseRequestData} from '@components/Logistics/Table/LogisticsPurchaseRequest';
+import LogisticsPurchaseRequest, {LogisticsPurchaseRequestStatusData} from '@components/Logistics/Table/LogisticsPurchaseRequestStatus';
 export default function Page() {
   const router = useRouter();
   return (
@@ -21,7 +21,7 @@ export default function Page() {
           <BackButton
             message=""
             customClassName="font-bold px-4 py-3 text-black"
-            onClick={() => router.push('/role/material-logistics')}
+            onClick={() => router.push('/role/material-logistics/purchase-request')}
           />
           <h1 className="ml-4 text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
             Purchase Request
@@ -34,7 +34,7 @@ export default function Page() {
   );
 }
 
-const DummyData: LogisticsPurchaseRequestData[] = [
+const DummyData: LogisticsPurchaseRequestStatusData[] = [
   {
     projectNo: '1',
     transactionNumber: '123',

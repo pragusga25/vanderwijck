@@ -9,7 +9,7 @@ const LogisticsCheckoutSummary: React.FC<{
     <div style={{ border: ' 1px solid #C4C4C4' }} className="py-2.5 px-7 mt-6 rounded-lg">
       <h4 className="font-medium text-lg">Checkout Summary</h4>
       {data.map((e, idx) => (
-        <CSCard data={e} checked={checked[idx]} />
+        <CSCard key={`CSCard-${idx}`} data={e} checked={checked[idx]} />
       ))}
       <div onClick={handleCheckout} className="w-full mt-5 text-white font-medium text-center uppercase py-2 rounded bg-blue-venice transform duration-300 ease-in-out hover:bg-blue-astronaut cursor-pointer">
         Checkout

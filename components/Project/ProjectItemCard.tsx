@@ -41,7 +41,7 @@ const ItemCard: React.FC<ProjectItemCardProps> = ({
           <h1 className="col-span-8">{avl}</h1>
         </div>
       </div>
-      <div className="w-full md:w-6/12">
+      <div className="w-full md:w-7/12 break-all">
         <h1 className="font-bold mb-6">Item Logs</h1>          
         <table className="w-full table-fixed text-center border-collapse">
             <thead>
@@ -53,9 +53,9 @@ const ItemCard: React.FC<ProjectItemCardProps> = ({
                 </tr>
             </thead>
             <tbody>
-            {itemLogs.map((e) => {
+            {itemLogs.map((e,idx) => {
             return (
-              <tr>
+              <tr key={`row-${idx}`} >
                 <td className="border-black border">{e.date}</td>
                 <td className="border-black border">{e.projectNo}</td>
                 <td className="border-black border">{e.qty}</td>

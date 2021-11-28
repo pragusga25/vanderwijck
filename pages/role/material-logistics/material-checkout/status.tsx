@@ -22,7 +22,7 @@ export default function Page() {
           <BackButton
             message=""
             customClassName="font-bold px-4 py-3 text-black"
-            onClick={() => router.push('/role/material-logistics')}
+            onClick={() => router.push('/role/material-logistics/material-checkout')}
           />
           <h1 className="ml-4 text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
             Material Checkout - Good Issue

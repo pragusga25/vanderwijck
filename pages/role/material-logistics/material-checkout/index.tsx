@@ -10,6 +10,7 @@ import LogisticsMaterialCheckoutCard, {
 } from '@components/Logistics/LogisticsMaterialCheckoutCard';
 import { useEffect, useState } from 'react';
 import LogisticsCheckoutSummary from '@components/Logistics/LogisticsCheckoutSummary';
+import Link from 'next/link';
 export default function Page() {
   const router = useRouter();
   const data = DummyMaterialCheckout;
@@ -36,7 +37,7 @@ export default function Page() {
 
   function handleCheckout() {
     console.log('Checkout');
-    console.log(data.filter((e,idx)=>checkedIndex[idx]))
+    console.log(data.filter((e, idx) => checkedIndex[idx]));
   }
 
   return (
@@ -76,15 +77,18 @@ export default function Page() {
               Check All
             </h4>
           </div>
-          <div className="bg-gray-400 cursor-pointer text-white text-sm rounded py-2 px-5 md:px-8 lg:px-10">
-            Checkout Status
-          </div>
+          <Link href="/role/material-logistics/material-checkout/status">
+            <div className="bg-gray-400 cursor-pointer text-white text-sm rounded py-2 px-5 md:px-8 lg:px-10">
+              Checkout Status
+            </div>
+          </Link>
         </div>
 
         <div className="w-full flex justify-between">
           <div className="w-2/3">
             {checkedIndex.map((e, idx) => (
               <LogisticsMaterialCheckoutCard
+                key={`LMCCard-${idx}`}
                 handleChecked={handleChecked}
                 index={idx}
                 isChecked={e}
@@ -105,7 +109,6 @@ export default function Page() {
     </Layout>
   );
 }
-
 
 const DummyMaterialCheckout: LogisticsMaterialCheckoutCardData[] = [
   {

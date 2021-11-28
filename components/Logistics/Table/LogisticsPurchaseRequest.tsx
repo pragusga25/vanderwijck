@@ -1,33 +1,63 @@
 import React from 'react';
+
 export interface LogisticsPurchaseRequestData {
   projectNo: string;
-  transactionNumber: string;
+  itemCode: string;
   itemName: string;
-  purchaseRequestNumber:string;
-  status: string;
+  qty: string;
+  remarks: string;
 }
-const LogisticsPurchaseRequest: React.FC<{ data: LogisticsPurchaseRequestData[] }> = ({ data }) => {
+
+const LogisticsPurchaseRequest: React.FC<{
+  data: LogisticsPurchaseRequestData[];
+  checkedIndex: boolean[];
+  handleChecked: (idx: number, check: boolean) => void;
+}> = ({ data, checkedIndex, handleChecked }) => {
   return (
-    <div style={{ minWidth: '900px' }} className="w-full px-1 overflow-x-auto text-center">
+    <div
+      style={{ minWidth: '900px' }}
+      className="w-full px-1 overflow-x-auto text-center"
+    >
       <table className="w-full">
-        <thead className="text-sm">
+        <thead className="">
           <tr>
-            <th className="w-2/12">Project No</th>
-            <th className="w-2/12">Transaction Number</th>
-            <th className="w-4/12">Item Name</th>
-            <th className="w-2/12">PR Number</th>
-            <th className="w-2/12">Status</th>
+            <th className="pb-4" style={{ width: '12%' }}>
+              Project No
+            </th>
+            <th className="pb-4" style={{ width: '12%' }}>
+              Item Code
+            </th>
+            <th className="pb-4" style={{ width: '30%' }}>
+              Item Name
+            </th>
+            <th className="pb-4" style={{ width: '8%' }}>
+              Qty
+            </th>
+            <th className="pb-4" style={{ width: '24%' }}>
+              Remarks
+            </th>
+            <th className="pb-4" style={{ width: '10%' }}></th>
           </tr>
         </thead>
         <tbody>
-          {data.map((e) => {
+          {data.map((e, idx) => {
             return (
-              <tr>
+              <tr key={`row-${idx}`}>
                 <td className="border-black border">{e.projectNo}</td>
-                <td className="border-black border">{e.transactionNumber}</td>
+                <td className="border-black border">{e.itemCode}</td>
                 <td className="border-black border">{e.itemName}</td>
-                <td className="border-black border">{e.purchaseRequestNumber}</td>
-                <td className="border-black border">{e.status}</td>
+                <td className="border-black border">{e.qty}</td>
+                <td className="border-black border">{e.remarks}</td>
+                <td className="h-10">
+                  <div
+                    onClick={() => handleChecked(idx, !checkedIndex[idx])}
+                    className="border-black w-9 h-8 mx-auto border rounded"
+                  >
+                    {checkedIndex[idx] ? (
+                      <img src="/role/check.png" alt="" />
+                    ) : null}
+                  </div>
+                </td>
               </tr>
             );
           })}

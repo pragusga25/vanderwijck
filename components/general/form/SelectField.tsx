@@ -30,8 +30,8 @@ export const SelectField: React.FC<{
         {...register('category')}
       >
         <option value="">Select...</option>
-        {choices.map((obj) => (
-          <option selected={!!obj.isSelected} value={obj.value}>
+        {choices.map((obj, idx) => (
+          <option key={`option-${idx}`} selected={!!obj.isSelected} value={obj.value}>
             {obj.text ?? obj.value}
           </option>
         ))}

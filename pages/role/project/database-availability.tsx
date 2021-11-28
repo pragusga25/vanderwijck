@@ -5,17 +5,21 @@ import { useRouter } from 'next/router';
 // import {Bg} from "@components/general/button"
 import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import ProjectCategorySearchBar, { ProjectCategoryProps } from '@components/Project/ProjectCategorySearchBar';
+import ProjectCategorySearchBar, {
+  ProjectCategoryData,
+} from '@components/Project/ProjectCategorySearchBar';
 import { useState } from 'react';
-import ProjectItemCard, { ProjectItemCardProps } from '@components/Project/ProjectItemCard';
+import ProjectItemCard, {
+  ProjectItemCardProps,
+} from '@components/Project/ProjectItemCard';
 
 export default function Page() {
   const router = useRouter();
-  const dummyOnSearch = (data)=>{
-    console.log(data)
-    setData(DummyItemcardData)
-  }
-  const [data, setData] = useState<ProjectItemCardProps>(null)
+  const dummyOnSearch = (data) => {
+    console.log(data);
+    setData(DummyItemcardData);
+  };
+  const [data, setData] = useState<ProjectItemCardProps>(null);
   return (
     <Layout
       colorType="white"
@@ -36,44 +40,47 @@ export default function Page() {
           </h1>
         </div>
         <div className="h-16"></div>
-      <ProjectCategorySearchBar data={DummyCategoryData} onSearch={dummyOnSearch} />
-      <div className="h-10"></div>
-      {!!data && <ProjectItemCard {...data} />}
+        <ProjectCategorySearchBar
+          data={DummyCategoryData}
+          onSearch={dummyOnSearch}
+        />
+        <div className="h-10"></div>
+        {!!data && <ProjectItemCard key="project-item-card" {...data} />}
       </div>
     </Layout>
   );
 }
 
 const DummyItemcardData: ProjectItemCardProps = {
-  itemName:"Pipe Seamless Carbon steel",
-  itemCode:"XXXX-XXXX-XXXX",
-  avl: "8",
-  qty:"10",
-  itemLogs:[
-   {
-     date: '19/11/2002',
-     projectNo:"20",
-     qty:"10",
-     status:"Book"
-   }
-  ]
-}
+  itemName: 'Pipe Seamless Carbon steel',
+  itemCode: 'XXXX-XXXX-XXXX',
+  avl: '8',
+  qty: '10',
+  itemLogs: [
+    {
+      date: '19/11/2002',
+      projectNo: '20',
+      qty: '10',
+      status: 'Book',
+    },
+  ],
+};
 
-const DummyCategoryData: ProjectCategoryProps[]=[
+const DummyCategoryData: ProjectCategoryData[] = [
   {
-    categoryName:"Pipe",
-    categoryId:"1"
+    categoryName: 'Pipe',
+    categoryId: '1',
   },
   {
-    categoryName:"Reducer",
-    categoryId:"2"
+    categoryName: 'Reducer',
+    categoryId: '2',
   },
   {
-    categoryName:"Flabge",
-    categoryId:"3"
+    categoryName: 'Flabge',
+    categoryId: '3',
   },
   {
-    categoryName:"Machine",
-    categoryId:"4"
+    categoryName: 'Machine',
+    categoryId: '4',
   },
-]
+];
