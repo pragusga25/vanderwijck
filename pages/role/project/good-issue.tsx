@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 // import {Bg} from "@components/general/button"
 import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import GoodIssueForm from '@components/general/form/GoodIssueForm';
+import GoodIssueForm, { ItemProps } from '@components/general/form/GoodIssueForm';
 export default function Page() {
   const router = useRouter();
   return (
@@ -28,8 +28,34 @@ export default function Page() {
           </h1>
           <div onClick={()=>router.push('/role/project/booked-goods')} className="ml-4 flex justify-center items-center px-6 outline-none cursor-pointer font-medium transform ease-in-out duration-500 hover:bg-gray-400 text-white rounded-2xl py-1.5 sm:px-8 sm:py-2 lg:px-12 lg:py-4 bg-gray-500">Booked Goods List</div>
         </div>
-        <GoodIssueForm />
+        <GoodIssueForm data={DummyItemProps} />
       </div>
     </Layout>
   );
 }
+const DummyItemProps: ItemProps[]=[
+  {
+    itemName: "Item A",
+    itemId:"A",
+    avl: 90,
+    subcode:[{value:"sc01A", text:"Subcode01 A",}, {value:"sc02A", text:"Subcode02 A"}, {value:"sc03A", text:"Subcode03 A"}]
+  },
+  {
+    itemName: "Item B",
+    itemId:"B",
+    avl: 10,
+    subcode:[{value:"sc01B", text:"Subcode01 B",}, {value:"sc02B", text:"Subcode02 B"}, {value:"sc03B", text:"Subcode03 B"}]
+  },
+  {
+    itemName: "Item C",
+    itemId:"C",
+    avl: 40,
+    subcode:[{value:"sc01C", text:"Subcode01 C",}, {value:"sc02C", text:"Subcode02 C"}, {value:"sc03C", text:"Subcode03 C"}]
+  },
+  {
+    itemName: "Item D",
+    itemId:"D",
+    avl: 24,
+    subcode:[{value:"sc01D", text:"Subcode01 D",}, {value:"sc02D", text:"Subcode02 D"}, {value:"sc03D", text:"Subcode03 D"}]
+  }
+]

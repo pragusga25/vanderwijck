@@ -1,7 +1,7 @@
 import React from 'react';
 import { FieldValues, UseFormRegister } from 'react-hook-form';
 
-interface SelectObject {
+export interface SelectObject {
   value: string;
   text?: string;
   isSelected?: boolean;
