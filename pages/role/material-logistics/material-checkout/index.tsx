@@ -38,6 +38,7 @@ export default function Page() {
   function handleCheckout() {
     console.log('Checkout');
     console.log(data.filter((e, idx) => checkedIndex[idx]));
+    router.push('/role/material-logistics/material-checkout/revision')
   }
 
   return (

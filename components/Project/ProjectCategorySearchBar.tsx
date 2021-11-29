@@ -14,6 +14,7 @@ const CategorySearchBar: React.FC<{ data: ProjectCategoryData[], onSearch: any }
     <div className="flex">
         <SelectFieldCategory
           register={register}
+          fieldName="categoryId"
           className="md:w-40 lg:w-52"
           choices={data.map((e) => {
             return {

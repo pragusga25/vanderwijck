@@ -12,7 +12,8 @@ import { useState } from 'react';
 import ProjectItemCard, {
   ProjectItemCardProps,
 } from '@components/Project/ProjectItemCard';
-
+import { LogisticsCategoryData } from '@components/Logistics/LogisticsCategorySearchBar';
+import LogisticsCategorySearchBar from '@components/Logistics/LogisticsCategorySearchBar';
 export default function Page() {
   const router = useRouter();
   const dummyOnSearch = (data) => {
@@ -40,7 +41,7 @@ export default function Page() {
           </h1>
         </div>
         <div className="h-16"></div>
-        <ProjectCategorySearchBar
+        <LogisticsCategorySearchBar
           data={DummyCategoryData}
           onSearch={dummyOnSearch}
         />
@@ -50,7 +51,28 @@ export default function Page() {
     </Layout>
   );
 }
-
+const DummyCategoryData: LogisticsCategoryData[] = [
+  {
+    categoryName: 'Categ. 1',
+    choices: ['001 barang 1', '001 barang 2', '001 barang 3', '001 barang 4'],
+    categoryId: '1',
+  },
+  {
+    categoryName: 'Categ. 2',
+    choices: ['002 barang 1', '002 barang 2', '002 barang 3', '002 barang 4'],
+    categoryId: '2',
+  },
+  {
+    categoryName: 'Categ. 3',
+    choices: ['003 barang 1', '003 barang 2', '003 barang 3', '003 barang 4'],
+    categoryId: '3',
+  },
+  {
+    categoryName: 'Categ. 4',
+    choices: ['004 barang 1', '004 barang 2', '004 barang 3', '004 barang 4'],
+    categoryId: '4',
+  },
+];
 const DummyItemcardData: ProjectItemCardProps = {
   itemName: 'Pipe Seamless Carbon steel',
   itemCode: 'XXXX-XXXX-XXXX',
@@ -65,22 +87,3 @@ const DummyItemcardData: ProjectItemCardProps = {
     },
   ],
 };
-
-const DummyCategoryData: ProjectCategoryData[] = [
-  {
-    categoryName: 'Pipe',
-    categoryId: '1',
-  },
-  {
-    categoryName: 'Reducer',
-    categoryId: '2',
-  },
-  {
-    categoryName: 'Flabge',
-    categoryId: '3',
-  },
-  {
-    categoryName: 'Machine',
-    categoryId: '4',
-  },
-];

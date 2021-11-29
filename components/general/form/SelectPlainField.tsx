@@ -10,8 +10,13 @@ export const SelectPlainField: React.FC<{
   choices: SelectObject[];
   onChange: (string) => void;
   subcode?: boolean;
-}> = ({ className, choices, onChange, subcode }) => {
-  const [selected, setSelected] = useState('');
+  defaultValue?:string;
+}> = ({ className, choices, onChange, subcode, defaultValue='' }) => {
+  const [selected, setSelected] = useState(defaultValue);
+
+  useEffect(()=>{
+    onChange(defaultValue)
+  },[])
 
   useEffect(() => {
     if (subcode) setSelected('');

@@ -48,12 +48,13 @@ export const SelectFieldCategory: React.FC<{
     disabled?: boolean;
     className?: string;
     choices: SelectObject[];
-  }> = ({  register, className, choices }) => {
+    fieldName: string
+  }> = ({  register, className, choices, fieldName }) => {
     return (
       <div className={className}>
         <select
           className=" w-full rounded-sm bg-gray-100 p-2 ring-1 ring-black focus:outline-none"
-          {...register('categoryId')}
+          {...register(fieldName)}
         >
           <option value="">Select...</option>
           {choices.map((obj,idx) => (

@@ -62,22 +62,25 @@ export default function Page() {
     </Layout>
   );
 }
-
 const DummyCategoryData: LogisticsCategoryData[] = [
   {
-    categoryName: 'Pipe aaaaaa aaaaaaaaa aaaaaaaa',
+    categoryName: 'PO 001',
+    choices:['001 barang 1', '001 barang 2', '001 barang 3', '001 barang 4'],
     categoryId: '1',
   },
   {
-    categoryName: 'Reducer',
+    categoryName: 'PO 002',
+    choices:['002 barang 1', '002 barang 2', '002 barang 3', '002 barang 4'],
     categoryId: '2',
   },
   {
-    categoryName: 'Flabge',
+    categoryName: 'PO 003',
+    choices:['003 barang 1', '003 barang 2', '003 barang 3', '003 barang 4'],
     categoryId: '3',
   },
   {
-    categoryName: 'Machine',
+    categoryName: 'PO 004',
+    choices:['004 barang 1', '004 barang 2', '004 barang 3', '004 barang 4'],
     categoryId: '4',
   },
 ];
