@@ -40,7 +40,8 @@ export const LogisticsSelectPlainField: React.FC<{
   selectClassName?: string;
   defaultValue?: string;
   withSelect?: boolean;
-  resetIfChoicesChanged?: boolean
+  resetIfChoicesChanged?: boolean;
+  placeholder?: string;
 }> = ({
   className,
   choices,
@@ -49,7 +50,8 @@ export const LogisticsSelectPlainField: React.FC<{
   defaultValue = '',
   withSelect,
   selectClassName = 'rounded-2xl bg-white',
-  resetIfChoicesChanged
+  resetIfChoicesChanged,
+  placeholder,
 }) => {
   const [selected, setSelected] = useState(defaultValue);
 
@@ -57,9 +59,9 @@ export const LogisticsSelectPlainField: React.FC<{
     onChange(fieldName, defaultValue);
   }, []);
 
-  useEffect(()=>{
-    if(resetIfChoicesChanged) setSelected(defaultValue)
-  },[choices])
+  useEffect(() => {
+    if (resetIfChoicesChanged) setSelected(defaultValue);
+  }, [choices]);
 
   function onSelect(e) {
     setSelected(e.target.value);
@@ -72,7 +74,7 @@ export const LogisticsSelectPlainField: React.FC<{
         value={selected ?? ''}
         className={`w-full   p-2 border-r-4 border-white focus:outline-none ${selectClassName}`}
       >
-        {!!withSelect && <option value="">Select...</option>}
+        {!!withSelect && <option value="">{placeholder ?? 'Select...'}</option>}
         {choices.map((obj, idx) => (
           <option
             key={'option-' + idx}

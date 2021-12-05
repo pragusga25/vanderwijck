@@ -1,12 +1,8 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
-import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
-import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
 
-export default  function Page() {
+export default function Page() {
   const router = useRouter();
   return (
     <Layout
@@ -30,4 +26,4 @@ export default  function Page() {
       </div>
     </Layout>
   );
-};
+}

@@ -13,7 +13,8 @@ export interface LogisticsCategoryData {
 const LogisticsCategorySearchBar: React.FC<{
   data: LogisticsCategoryData[];
   onSearch: any;
-}> = ({ data, onSearch }) => {
+  placeholder?: string;
+}> = ({ data, onSearch, placeholder }) => {
   const { register, handleSubmit, getValues, setValue } = useForm();
   const [selectedCategory, setSelectedCategory] = useState<string>();
   const [choices, setChoices] = useState<string[]>([]);
@@ -26,7 +27,7 @@ const LogisticsCategorySearchBar: React.FC<{
     setChoices(data.find((e) => e.categoryId == val)?.choices ?? []);
     setValue(fieldName, val);
   }
-  function onItemSelected(fieldName: string, val: string){
+  function onItemSelected(fieldName: string, val: string) {
     setValue(fieldName, val);
   }
   return (
@@ -43,6 +44,7 @@ const LogisticsCategorySearchBar: React.FC<{
           fieldName="e.categoryId"
           selectClassName="bg-gray-100 ring-1 ring-black focus:outline-none"
           onChange={onCategorySelected}
+          placeholder={placeholder}
         />
         {/* <LogisticsSelectPlainField /> */}
         <LogisticsSelectPlainField
