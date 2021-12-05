@@ -51,6 +51,7 @@ export default function Page() {
     </Layout>
   );
 }
+
 const DummyCategoryData: LogisticsCategoryData[] = [
   {
     categoryName: 'Categ. 1',
