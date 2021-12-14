@@ -25,11 +25,7 @@ export default function Page() {
   }
 
   const choices: LogisticsMaterialCheckoutRevisionChoices = {
-    PilihanItem: PilihanItem,
-    PilihanKategori: PilihanKategori,
-    PilihanKode: PilihanKode,
-    PilihanProject: PilihanProject,
-    PilihanSubcode: PilihanSubcode,
+    PilihanRemarks: ['Remark 1', 'Remark 2', 'Remark 3']
   };
 
   return (
@@ -64,19 +60,6 @@ export default function Page() {
     </Layout>
   );
 }
-const PilihanProject: string[] = [];
-const PilihanKategori: string[] = [];
-const PilihanKode: string[] = [];
-const PilihanItem: string[] = [];
-const PilihanSubcode: string[] = [];
-
-for (let i = 1; i < 6; i++) {
-  PilihanProject.push('Proj ' + i);
-  PilihanKategori.push('Cat ' + i);
-  PilihanKode.push('Code ' + i);
-  PilihanItem.push('Item ' + i);
-  PilihanSubcode.push('Scode ' + i);
-}
 
 const DummyMaterialCheckoutRevision: LogisticsMaterialCheckoutRevisionData[] = [
   {
@@ -86,8 +69,7 @@ const DummyMaterialCheckoutRevision: LogisticsMaterialCheckoutRevisionData[] = [
     itemName: 'Item 1',
     subcode: 'Scode 1',
     qty: '20',
-    unit: '30',
-    remarks: 'Remarks A',
+    unit: 'pcs',
   },
   {
     projectNo: 'Proj 1',
@@ -96,8 +78,7 @@ const DummyMaterialCheckoutRevision: LogisticsMaterialCheckoutRevisionData[] = [
     itemName: 'Item 1',
     subcode: 'scode 1',
     qty: '20',
-    unit: '30',
-    remarks: 'Remarks A',
+    unit: 'pcs',
   },
   {
     projectNo: 'Proj 1',
@@ -106,8 +87,7 @@ const DummyMaterialCheckoutRevision: LogisticsMaterialCheckoutRevisionData[] = [
     itemName: 'Item 1',
     subcode: 'scode 1',
     qty: '20',
-    unit: '30',
-    remarks: 'Remarks A',
+    unit: 'pcs',
   },
   {
     projectNo: 'Proj 1',
@@ -116,8 +96,7 @@ const DummyMaterialCheckoutRevision: LogisticsMaterialCheckoutRevisionData[] = [
     itemName: 'Item 1',
     subcode: 'scode 1',
     qty: '20',
-    unit: '30',
-    remarks: 'Remarks A',
+    unit: 'pcs',
   },
   {
     projectNo: 'Proj 1',
@@ -126,7 +105,6 @@ const DummyMaterialCheckoutRevision: LogisticsMaterialCheckoutRevisionData[] = [
     itemName: 'Item 1',
     subcode: 'scode 1',
     qty: '20',
-    unit: '30',
-    remarks: 'Remarks A',
+    unit: 'pcs',
   },
 ];

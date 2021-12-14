@@ -8,56 +8,53 @@ import {
 import {
   LogisticsSelectPlainField,
   LogisticsNumberField,
+  LogisticsDateField,
 } from '@components/general/form/LogisticsSelectPlainField';
 import { SelectObject } from '@components/general/form/SelectField';
-export interface LogisticsMaterialCheckoutRevisionData {
-  projectNo: string;
-  category: string;
-  code: string;
-  itemName: string;
-  subcode: string;
-  qty: string;
-  unit: string;
-}
-export interface LogisticsMaterialCheckoutRevisionChoices {
-  PilihanRemarks: string[];
-}
+import {
+  PurchasingRevisionChoices,
+  PurchaseItemLogRevision,
+  SupplierData,
+} from './PurchasingTypes';
 
-const LogisticsMaterialCheckoutRevision: React.FC<{
-  choices: LogisticsMaterialCheckoutRevisionChoices;
-  data: LogisticsMaterialCheckoutRevisionData[];
+const PurchaseListRevisionTable: React.FC<{
+  choices: PurchasingRevisionChoices;
+  data: PurchaseItemLogRevision[];
   handleChecked: (idx: number, check: boolean) => void;
   checkedIndex: boolean[];
 }> = ({ data, handleChecked, checkedIndex, choices }) => {
   const { register, getValues, setValue } = useForm();
   function handlePost() {
     const allResult = getValues('e');
-    const checkedResult: any[] = []
-    checkedIndex.forEach((bol, idx)=> {
-      if(bol) checkedResult.push(allResult[idx])
-    })
-    console.log(checkedResult)
+    const checkedResult: any[] = [];
+    checkedIndex.forEach((bol, idx) => {
+      if (bol) checkedResult.push(allResult[idx]);
+    });
+    console.log(checkedResult);
   }
   return (
-    <div style={{ minWidth: '1000px' }} className="w-full px-1 overflow-x-auto relative">
+    <div
+      style={{ minWidth: '1000px' }}
+      className="w-full px-1 overflow-x-auto relative"
+    >
       <div
         style={{ width: 'max-content' }}
         onClick={handlePost}
         className="bg-blue-astronaut cursor-pointer text-white font-medium py-2 px-9 rounded right-0 top-0 absolute"
       >
-        Book Database
+        Post
       </div>
       <table className="w-full mt-16">
         <thead className="text-sm">
           <tr>
             <th style={{ width: '11%' }}>Proj. No</th>
             <th style={{ width: '11%' }}>Category</th>
-            <th style={{ width: '12%' }}>Code</th>
             <th style={{ width: '26%' }}>Item Name</th>
-            <th style={{ width: '12%' }}>Subcode</th>
             <th style={{ width: '4%' }}>Qty</th>
             <th style={{ width: '4%' }}>Unit</th>
-            <th style={{ width: '15%' }}>Remarks</th>
+            <th style={{ width: '12%' }}>Del. Terms</th>
+            <th style={{ width: '12%' }}>ETA</th>
+            <th style={{ width: '15%' }}>Sent To</th>
             <th style={{ width: '5%' }}></th>
           </tr>
         </thead>
@@ -80,31 +77,23 @@ const LogisticsMaterialCheckoutRevision: React.FC<{
 };
 
 const Row: React.FC<{
-  data: LogisticsMaterialCheckoutRevisionData;
-  choices: LogisticsMaterialCheckoutRevisionChoices;
+  data: PurchaseItemLogRevision;
+  choices: PurchasingRevisionChoices;
   handleChecked: any;
   idx: number;
   checked: boolean;
   setValue: UseFormSetValue<FieldValues>;
-}> = ({
-  idx,
-  data: e,
-  handleChecked,
-  checked,
-  choices,
-  setValue,
-}) => {
+}> = ({ idx, data: e, handleChecked, checked, choices, setValue }) => {
   function handleChange(fieldName: string, value: string) {
     setValue(`e.${idx}.${fieldName}`, value);
   }
-  useEffect(()=>{
-    setValue(`e.${idx}.projectNo`, e.projectNo);
+  useEffect(() => {
+    setValue(`e.${idx}.projectNo`, e.projectNumber);
     setValue(`e.${idx}.category`, e.category);
-    setValue(`e.${idx}.code`, e.code);
     setValue(`e.${idx}.itemName`, e.itemName);
-    setValue(`e.${idx}.subcode`, e.subcode);
+    setValue(`e.${idx}.qty`, e.qty);
     setValue(`e.${idx}.unit`, e.unit);
-  },[])
+  }, []);
   function extractChoices(data: string[]): SelectObject[] {
     return data.map((e) => {
       return {
@@ -115,21 +104,9 @@ const Row: React.FC<{
   }
   return (
     <tr>
-      <td className=" text-center border-black border">
-{e.projectNo}
-      </td>
-      <td className="text-center border-black border">
-{e.category}
-      </td>
-      <td className="text-center border-black border">
-{e.code}
-      </td>
-      <td className="text-center border-black border">
-{e.itemName}
-      </td>
-      <td className="text-center border-black border">
-{e.subcode}
-      </td>
+      <td className=" text-center border-black border">{e.projectNumber}</td>
+      <td className="text-center border-black border">{e.category}</td>
+      <td className="text-center border-black border">{e.itemName}</td>
       <td className="p-1.5 border-black border">
         <LogisticsNumberField
           onChange={handleChange}
@@ -137,16 +114,31 @@ const Row: React.FC<{
           fieldName="qty"
         />
       </td>
+      <td className="p-1.5 border-black border">{e.unit}</td>
       <td className="p-1.5 border-black border">
-{e.unit}
-      </td>
-      <td className="p-1.5 border-black border">
-      <LogisticsSelectPlainField
+        <LogisticsSelectPlainField
           className="w-full"
           onChange={handleChange}
-          choices={extractChoices(choices.PilihanRemarks)}
-          defaultValue={""}
-          fieldName="remarks"
+          choices={extractChoices(choices.PilihanDeliveryTerm)}
+          defaultValue={''}
+          fieldName="deliveryTerm"
+          withSelect
+        />
+      </td>
+      <td className="p-1.5 border-black border">
+        <LogisticsDateField
+          className="w-full"
+          onChange={handleChange}
+          fieldName="eta"
+        />
+      </td>
+      <td className="p-1.5 border-black border">
+        <LogisticsSelectPlainField
+          className="w-full"
+          onChange={handleChange}
+          choices={extractChoices(choices.PilihanTujuan)}
+          defaultValue={''}
+          fieldName="sentTo"
           withSelect
         />
       </td>
@@ -161,4 +153,4 @@ const Row: React.FC<{
     </tr>
   );
 };
-export default LogisticsMaterialCheckoutRevision;
+export default PurchaseListRevisionTable;

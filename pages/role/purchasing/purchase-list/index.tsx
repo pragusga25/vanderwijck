@@ -34,7 +34,7 @@ export default function Page() {
   function handleCheckout() {
     console.log('Checkout');
     console.log(data.filter((e, idx) => checkedIndex[idx]));
-    router.push('/role/material-logistics/material-checkout/revision');
+    router.push('/role/purchasing/purchase-list/revision');
   }
 
   return (
@@ -51,17 +51,22 @@ export default function Page() {
             <BackButton
               message=""
               customClassName="font-bold px-4 py-3 text-black"
-              onClick={() => router.push('/role/material-logistics')}
+              onClick={() => router.push('/role/purchasing')}
             />
             <h1 className="ml-4 text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
               Purchase List
             </h1>
           </div>
-          <Link href="/role/purchasing/status">
-            <div className="py-2 px-8 bg-blue-venice cursor-pointer rounded text-sm text-white -end">
-              Status
+          <div className='flex'>
+            <div onClick={handleCheckout} className="py-2 mr-8 px-8 bg-blue-venice cursor-pointer rounded text-sm text-white -end">
+              Accept
             </div>
-          </Link>
+            <Link href="/role/purchasing/status">
+              <div className="py-2 px-8 bg-blue-venice cursor-pointer rounded text-sm text-white -end">
+                Status
+              </div>
+            </Link>
+          </div>
         </div>
 
         <div className="w-full flex justify-between">

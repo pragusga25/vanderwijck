@@ -46,13 +46,18 @@ export default function Page() {
             onSearch={handleSearch}
           />
           <Link href="/role/material-logistics/storage-database/good-receipt">
-            <div className="py-1.5 px-10 bg-astronaut hover:bg-blue-astronaut duration-300 ease-in-out cursor-pointer rounded text-white text-sm font-semibold">
+            <div className="py-1.5 px-4 bg-astronaut hover:bg-blue-astronaut duration-300 ease-in-out cursor-pointer rounded text-white text-sm font-semibold">
               Good Receipt
             </div>
           </Link>
           <Link href="/role/material-logistics/storage-database/book-database">
-            <div className="py-1.5 px-10 bg-astronaut hover:bg-blue-astronaut duration-300 ease-in-out cursor-pointer rounded text-white text-sm font-semibold">
+            <div className="py-1.5 px-4 bg-astronaut hover:bg-blue-astronaut duration-300 ease-in-out cursor-pointer rounded text-white text-sm font-semibold">
               Book Database
+            </div>
+          </Link>
+          <Link href="/role/project/database-availability">
+            <div className="py-1.5 px-4 bg-astronaut hover:bg-blue-astronaut duration-300 ease-in-out cursor-pointer rounded text-white text-sm font-semibold">
+              Database Avail.
             </div>
           </Link>
         </div>
