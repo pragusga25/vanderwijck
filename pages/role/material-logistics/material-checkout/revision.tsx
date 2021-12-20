@@ -1,19 +1,25 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
-import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
-import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
 import LogisticsMaterialCheckoutRevision, {
   LogisticsMaterialCheckoutRevisionData,
   LogisticsMaterialCheckoutRevisionChoices,
 } from '@components/Logistics/Table/LogisticsMaterialCheckoutRevisionTable';
 import { useState } from 'react';
-export default function Page() {
+import prisma from '@lib/prisma';
+import { GetServerSideProps } from 'next';
+import { Remark, Status } from '@prisma/client';
+
+export default function Page({
+  data: myData,
+  remarks,
+}: {
+  data: LogisticsMaterialCheckoutRevisionData[];
+  remarks: Remark[];
+}) {
   const router = useRouter();
 
-  const data = DummyMaterialCheckoutRevision;
+  const data = myData;
   const [checkedIndex, setCheckedIndex] = useState<boolean[]>(
     Array(data.length).fill(false)
   );
@@ -21,11 +27,12 @@ export default function Page() {
   function handleChecked(idx: number, check: boolean) {
     const res = [...checkedIndex];
     res[idx] = check;
+
     setCheckedIndex(res);
   }
 
   const choices: LogisticsMaterialCheckoutRevisionChoices = {
-    PilihanRemarks: ['Remark 1', 'Remark 2', 'Remark 3']
+    PilihanRemarks: remarks.map((d) => d.name),
   };
 
   return (
@@ -51,60 +58,59 @@ export default function Page() {
         </div>
         <div className="h-10"></div>
         <LogisticsMaterialCheckoutRevision
+          remarks={remarks}
           choices={choices}
           checkedIndex={checkedIndex}
           handleChecked={handleChecked}
-          data={DummyMaterialCheckoutRevision}
+          data={myData}
         />
       </div>
     </Layout>
   );
 }
 
-const DummyMaterialCheckoutRevision: LogisticsMaterialCheckoutRevisionData[] = [
-  {
-    projectNo: 'Proj 1',
-    category: 'Cat 1',
-    code: 'Code 1',
-    itemName: 'Item 1',
-    subcode: 'Scode 1',
-    qty: '20',
-    unit: 'pcs',
-  },
-  {
-    projectNo: 'Proj 1',
-    category: 'Cat 1',
-    code: 'Code 1',
-    itemName: 'Item 1',
-    subcode: 'scode 1',
-    qty: '20',
-    unit: 'pcs',
-  },
-  {
-    projectNo: 'Proj 1',
-    category: 'Cat 1',
-    code: 'Code 1',
-    itemName: 'Item 1',
-    subcode: 'scode 1',
-    qty: '20',
-    unit: 'pcs',
-  },
-  {
-    projectNo: 'Proj 1',
-    category: 'Cat 1',
-    code: 'Code 1',
-    itemName: 'Item 1',
-    subcode: 'scode 1',
-    qty: '20',
-    unit: 'pcs',
-  },
-  {
-    projectNo: 'Proj 1',
-    category: 'Cat 1',
-    code: 'Code 1',
-    itemName: 'Item 1',
-    subcode: 'scode 1',
-    qty: '20',
-    unit: 'pcs',
-  },
-];
+export const getServerSideProps: GetServerSideProps = async () => {
+  const itemLogs = await prisma.itemLog.findMany({
+    where: {
+      status: Status.ISSUE_REQUEST_SENT,
+    },
+    select: {
+      id: true,
+      quantity: true,
+      unit: true,
+      item: {
+        select: {
+          id: true,
+          name: true,
+          category: true,
+          code: true,
+          avl: true,
+          quantity: true,
+          subcodeValue: true,
+        },
+      },
+    },
+  });
+
+  const remarks = await prisma.remark.findMany();
+
+  const data: LogisticsMaterialCheckoutRevisionData[] = itemLogs.map((it) => ({
+    projectNo: '1367',
+    category: it.item.category,
+    code: it.item.code,
+    itemName: it.item.name,
+    subcode: it.item.subcodeValue,
+    qty: it.quantity + '',
+    unit: it.unit,
+    avl: it.item.avl,
+    itemId: it.item.id,
+    itemLogId: it.id,
+  }));
+
+  return {
+    props: {
+      data,
+      remarks,
+    },
+  };
+};

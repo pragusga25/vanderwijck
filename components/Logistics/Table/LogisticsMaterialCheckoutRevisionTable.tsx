@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FieldValues,
   useForm,
@@ -10,6 +10,11 @@ import {
   LogisticsNumberField,
 } from '@components/general/form/LogisticsSelectPlainField';
 import { SelectObject } from '@components/general/form/SelectField';
+import toast from 'react-hot-toast';
+import { Remark } from '@prisma/client';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+
 export interface LogisticsMaterialCheckoutRevisionData {
   projectNo: string;
   category: string;
@@ -18,6 +23,9 @@ export interface LogisticsMaterialCheckoutRevisionData {
   subcode: string;
   qty: string;
   unit: string;
+  avl: number;
+  itemId: number;
+  itemLogId: number;
 }
 export interface LogisticsMaterialCheckoutRevisionChoices {
   PilihanRemarks: string[];
@@ -28,25 +36,84 @@ const LogisticsMaterialCheckoutRevision: React.FC<{
   data: LogisticsMaterialCheckoutRevisionData[];
   handleChecked: (idx: number, check: boolean) => void;
   checkedIndex: boolean[];
-}> = ({ data, handleChecked, checkedIndex, choices }) => {
+  remarks: Remark[];
+}> = ({ data, handleChecked, checkedIndex, choices, remarks }) => {
   const { register, getValues, setValue } = useForm();
-  function handlePost() {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  async function handlePost() {
     const allResult = getValues('e');
-    const checkedResult: any[] = []
-    checkedIndex.forEach((bol, idx)=> {
-      if(bol) checkedResult.push(allResult[idx])
-    })
-    console.log(checkedResult)
+    const checkedResult: any[] = [];
+    checkedIndex.forEach((bol, idx) => {
+      if (bol) checkedResult.push(allResult[idx]);
+    });
+    let remarkSelectd = true;
+    let itemIdAvlMap: { [key: number]: number } = {};
+
+    checkedResult.forEach((d) => {
+      if (!d.remarks || !d.qty) remarkSelectd = false;
+      itemIdAvlMap = {
+        ...itemIdAvlMap,
+        [d.itemId]: d.avl,
+      };
+    });
+
+    if (!remarkSelectd) return toast.error('Silkan lengkapi fields');
+
+    checkedResult.forEach((d) => {
+      itemIdAvlMap[d.itemId] = itemIdAvlMap[d.itemId] - Number(d.qty);
+    });
+
+    let isMinus = false;
+    Object.keys(itemIdAvlMap).forEach((key) => {
+      if (itemIdAvlMap[key] < 0) isMinus = true;
+    });
+
+    if (isMinus) return toast.error('Stok tidak cukup');
+
+    const dataPost = checkedResult.map((d) => ({
+      itemLogId: d.itemLogId,
+      remarkId: remarks.find(
+        (r) => r.name.toLowerCase() === d.remarks.toLowerCase()
+      ).id,
+      itemId: d.itemId,
+      quantity: Number(d.qty),
+    }));
+
+    try {
+      setLoading(true);
+      await toast.promise(
+        axios.post('/api/ml/materialCheckout/revision', {
+          dataPost,
+        }),
+        {
+          loading: 'Memproses data...',
+          success: 'Berhasil memproses data',
+          error: 'Gagal memproses data',
+        }
+      );
+
+      router.reload();
+    } catch (e) {
+      toast.error(e.message);
+    } finally {
+      setLoading(false);
+    }
   }
   return (
-    <div style={{ minWidth: '1000px' }} className="w-full px-1 overflow-x-auto relative">
-      <div
+    <div
+      style={{ minWidth: '1000px' }}
+      className="w-full px-1 overflow-x-auto relative"
+    >
+      <button
+        disabled={loading}
         style={{ width: 'max-content' }}
         onClick={handlePost}
         className="bg-blue-astronaut cursor-pointer text-white font-medium py-2 px-9 rounded right-0 top-0 absolute"
       >
         Book Database
-      </div>
+      </button>
       <table className="w-full mt-16">
         <thead className="text-sm">
           <tr>
@@ -86,25 +153,21 @@ const Row: React.FC<{
   idx: number;
   checked: boolean;
   setValue: UseFormSetValue<FieldValues>;
-}> = ({
-  idx,
-  data: e,
-  handleChecked,
-  checked,
-  choices,
-  setValue,
-}) => {
+}> = ({ idx, data: e, handleChecked, checked, choices, setValue }) => {
   function handleChange(fieldName: string, value: string) {
     setValue(`e.${idx}.${fieldName}`, value);
   }
-  useEffect(()=>{
+  useEffect(() => {
     setValue(`e.${idx}.projectNo`, e.projectNo);
     setValue(`e.${idx}.category`, e.category);
     setValue(`e.${idx}.code`, e.code);
     setValue(`e.${idx}.itemName`, e.itemName);
     setValue(`e.${idx}.subcode`, e.subcode);
     setValue(`e.${idx}.unit`, e.unit);
-  },[])
+    setValue(`e.${idx}.avl`, e.avl);
+    setValue(`e.${idx}.itemId`, e.itemId);
+    setValue(`e.${idx}.itemLogId`, e.itemLogId);
+  }, []);
   function extractChoices(data: string[]): SelectObject[] {
     return data.map((e) => {
       return {
@@ -115,21 +178,11 @@ const Row: React.FC<{
   }
   return (
     <tr>
-      <td className=" text-center border-black border">
-{e.projectNo}
-      </td>
-      <td className="text-center border-black border">
-{e.category}
-      </td>
-      <td className="text-center border-black border">
-{e.code}
-      </td>
-      <td className="text-center border-black border">
-{e.itemName}
-      </td>
-      <td className="text-center border-black border">
-{e.subcode}
-      </td>
+      <td className=" text-center border-black border">{e.projectNo}</td>
+      <td className="text-center border-black border">{e.category}</td>
+      <td className="text-center border-black border">{e.code}</td>
+      <td className="text-center border-black border">{e.itemName}</td>
+      <td className="text-center border-black border">{e.subcode}</td>
       <td className="p-1.5 border-black border">
         <LogisticsNumberField
           onChange={handleChange}
@@ -137,15 +190,13 @@ const Row: React.FC<{
           fieldName="qty"
         />
       </td>
+      <td className="p-1.5 border-black border">{e.unit}</td>
       <td className="p-1.5 border-black border">
-{e.unit}
-      </td>
-      <td className="p-1.5 border-black border">
-      <LogisticsSelectPlainField
+        <LogisticsSelectPlainField
           className="w-full"
           onChange={handleChange}
           choices={extractChoices(choices.PilihanRemarks)}
-          defaultValue={""}
+          defaultValue={''}
           fieldName="remarks"
           withSelect
         />
