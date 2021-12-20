@@ -15,6 +15,7 @@ model Item {
   code     String   @unique
   name     String
   quantity Int
+  avl      Int
   booked   Int
   category Category
 
@@ -146,6 +147,7 @@ enum Status {
   CANCELLED
   SELECTED_FOR_CHECKOUT
   BOOK_REQUEST
+  DECLINED
 }
 
 enum Incoterms {

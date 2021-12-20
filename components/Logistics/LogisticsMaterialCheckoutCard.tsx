@@ -6,6 +6,8 @@ export interface LogisticsMaterialCheckoutCardData {
   qty: string;
   avl: string;
   remarks: string;
+  id: number;
+  itemId: number;
 }
 
 export interface LogisticsMaterialCheckoutCardProps {

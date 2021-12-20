@@ -8,7 +8,9 @@ import { BackButton } from '@components/general/button';
 import { ProjectStatusData } from '@components/Project/ProjectTable';
 import ProjectStatusTable from '@components/Project/ProjectTable';
 import ProjectNavigation from '@components/Project/ProjectNavigation';
-export default function Page() {
+import { GetServerSideProps } from 'next';
+import prisma from '@lib/prisma';
+export default function Page({ data }: { data: ProjectStatusData[] }) {
   const router = useRouter();
   return (
     <Layout
@@ -30,42 +32,51 @@ export default function Page() {
           </h1>
           <ProjectNavigation />
         </div>
-        <h1 className="font-bold text-2xl mt-10 mb-16 xl:text-4xl">Good Issue</h1>
-        <ProjectStatusTable data={DummyData} />
+        <h1 className="font-bold text-2xl mt-10 mb-16 xl:text-4xl">
+          Good Issue
+        </h1>
+        <ProjectStatusTable data={data} />
       </div>
     </Layout>
   );
 }
 
-const DummyData: ProjectStatusData[] = [
-  {
-    projectNo: '1',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    subcode: '12345',
-    qty: '12',
-    unit: '120',
-    approvedBy: 'ayam',
-    status: 'sukses',
-  },
-  {
-    projectNo: '1',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    subcode: '12345',
-    qty: '12',
-    unit: '120',
-    approvedBy: 'ayam',
-    status: 'sukses',
-  },
-  {
-    projectNo: '1',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    subcode: '12345',
-    qty: '12',
-    unit: '120',
-    approvedBy: 'ayam',
-    status: 'sukses',
-  },
-];
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const itemLogs = await prisma.itemLog.findMany({
+    select: {
+      transactionId: true,
+      quantity: true,
+      unit: true,
+      status: true,
+      item: {
+        select: {
+          name: true,
+          subcodeValue: true,
+        },
+      },
+      transaction: {
+        select: {
+          projectId: true,
+          approvedBy: true,
+        },
+      },
+    },
+  });
+
+  const data: ProjectStatusData[] = itemLogs.map((log) => ({
+    projectNo: 1367 + '',
+    transactionNumber: log.transactionId + '',
+    itemName: log.item.name,
+    subcode: log.item.subcodeValue,
+    qty: log.quantity + '',
+    unit: log.unit + '',
+    approvedBy: log.transaction.approvedBy,
+    status: log.status,
+  }));
+
+  return {
+    props: {
+      data,
+    },
+  };
+};

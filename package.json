@@ -4,7 +4,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "build-css": "tailwindcss build"
+    "build-css": "tailwindcss build",
+    "migrate": "npx prisma migrate dev",
+    "gen": "npx prisma generate",
+    "studio": "npx prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^3.6.0",

@@ -17,7 +17,7 @@ export default function Page({
   const data = items.map((item) => ({
     itemName: item.name,
     itemId: item.id + '',
-    avl: item.quantity - item.booked,
+    avl: item.avl,
   }));
 
   return (
@@ -55,8 +55,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const items = await prisma.item.findMany();
   const remarks = await prisma.remark.findMany();
 
-  console.log(items, 'ITEMSSS');
-  console.log(remarks, 'REMARKS');
   return {
     props: {
       items,

@@ -6,9 +6,7 @@ import {
   UseFormSetValue,
 } from 'react-hook-form';
 import { TextField } from './TextField';
-import { SelectField } from './SelectField';
 import { SelectPlainField } from './SelectPlainField';
-import { SelectObject } from './SelectField';
 import { Remark } from '@prisma/client';
 import { Status } from '@prisma/client';
 import axios from 'axios';
@@ -234,12 +232,6 @@ const Material: React.FC<{
       </div>
       <div className="grid grid-cols-12 my-2">
         <div className="col-span-12 md:col-span-8">
-          {/* <TextField
-            register={register}
-            fieldLabel="Remarks:"
-            fieldName={`e.material-${no}.remarks`}
-            className="w-full text-lg"
-          /> */}
           <label
             htmlFor={`e.material-${no}.remarks`}
             className=" mb-2 mt-4 font-medium text-lg block"
@@ -258,24 +250,6 @@ const Material: React.FC<{
             })}
           />
         </div>
-        <div className="hidden md:block md:col-span-1"></div>
-        {/* <div className="col-span-5 md:col-span-3">
-          <label
-            htmlFor={`e.material-${no}.subcode`}
-            className=" md:mt-0 mt-3 mb-1 md:mb-4 xl:mb-6 font-medium text-lg block"
-          >
-            {'Subcode:'}
-          </label>
-
-          <SelectPlainField
-            onChange={onSubcodeChange}
-            subcode
-            className=" w-full text-lg "
-            choices={
-              data.find((e) => e.itemId == activeItem?.itemId)?.subcode ?? []
-            }
-          />
-        </div> */}
       </div>
     </div>
   );
