@@ -145,7 +145,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const data = prItemLogs.map((log) => ({
     id: log.id,
     projectNo: 'Project 1367',
-    approvedBy: 'John Doe',
+    approvedBy: 'Iqbal Baihaqi',
     itemName: log.parentItemLog.item.name,
     qty: log.quantity + '',
     avl: log.parentItemLog.item.avl + '',

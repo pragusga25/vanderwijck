@@ -211,7 +211,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   const data: LogisticsMaterialCheckoutCardData[] = itemLogs?.map((log) => ({
     projectNo: 'Project 1367',
-    approvedBy: log.transaction.approvedBy,
+    approvedBy: log.transaction.approvedBy ?? 'Iqbal Baihaqi',
     itemName: log.item.name,
     qty: log.quantity + '',
     avl: log.item.avl + '',
