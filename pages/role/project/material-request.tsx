@@ -1,14 +1,25 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
-import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
-import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
 import MaterialRequestForm from '@components/general/form/MaterialRequestForm';
-import { ItemProps } from '@components/general/form/GoodIssueForm';
-export default  function Page() {
+import { GetServerSideProps } from 'next';
+import prisma from '@lib/prisma';
+import { Item, Remark } from '@prisma/client';
+
+export default function Page({
+  items,
+  remarks,
+}: {
+  items: Item[];
+  remarks: Remark[];
+}) {
   const router = useRouter();
+  const data = items.map((item) => ({
+    itemName: item.name,
+    itemId: item.id + '',
+    avl: item.avl,
+  }));
+
   return (
     <Layout
       colorType="white"
@@ -28,37 +39,20 @@ export default  function Page() {
             Material Request
           </h1>
         </div>
-        <MaterialRequestForm data={DummyItemProps} />
-
+        <MaterialRequestForm data={data} remarks={remarks} />
       </div>
-
     </Layout>
   );
-};
+}
 
-const DummyItemProps: ItemProps[]=[
-  {
-    itemName: "Item A",
-    itemId:"A",
-    avl: 90,
-    subcode:[{value:"sc01A", text:"Subcode01 A",}, {value:"sc02A", text:"Subcode02 A"}, {value:"sc03A", text:"Subcode03 A"}]
-  },
-  {
-    itemName: "Item B",
-    itemId:"B",
-    avl: 10,
-    subcode:[{value:"sc01B", text:"Subcode01 B",}, {value:"sc02B", text:"Subcode02 B"}, {value:"sc03B", text:"Subcode03 B"}]
-  },
-  {
-    itemName: "Item C",
-    itemId:"C",
-    avl: 40,
-    subcode:[{value:"sc01C", text:"Subcode01 C",}, {value:"sc02C", text:"Subcode02 C"}, {value:"sc03C", text:"Subcode03 C"}]
-  },
-  {
-    itemName: "Item D",
-    itemId:"D",
-    avl: 24,
-    subcode:[{value:"sc01D", text:"Subcode01 D",}, {value:"sc02D", text:"Subcode02 D"}, {value:"sc03D", text:"Subcode03 D"}]
-  }
-]
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const items = await prisma.item.findMany();
+  const remarks = await prisma.remark.findMany();
+
+  return {
+    props: {
+      items,
+      remarks,
+    },
+  };
+};

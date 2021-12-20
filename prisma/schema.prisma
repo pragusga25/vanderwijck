@@ -1,0 +1,154 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+
+}
+
+model Item {
+  id       Int      @id @default(autoincrement())
+  code     String   @unique
+  name     String
+  quantity Int
+  avl      Int
+  booked   Int      @default(0)
+  category Category
+
+  ItemsOnSuppliers ItemsOnSuppliers[]
+  Subcode          Subcode            @relation(fields: [subcodeValue], references: [value])
+  subcodeValue     String
+  ItemLog          ItemLog[]
+
+}
+
+model ItemLog {
+  id             Int      @id @default(autoincrement())
+  itemId         Int
+  item           Item     @relation(fields: [itemId], references: [id])
+  status         Status
+  unit           String
+  quantity       Int
+  rejectedReason String?
+  date           DateTime @default(now())
+  remarkId       Int
+  remark         Remark   @relation(fields: [remarkId], references: [id])
+
+  locationId    Int?
+  location      Location?    @relation(fields: [locationId], references: [id])
+  transactionId Int
+  transaction   Transaction  @relation(fields: [transactionId], references: [id])
+  PriItemLog    PriItemLog[]
+}
+
+model Transaction {
+  id          Int       @id @default(autoincrement())
+  requestedBy String
+  approvedBy  String?
+  status      Status
+  ItemLog     ItemLog[]
+
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id])
+}
+
+model PriItemLog {
+  id       Int       @id @default(autoincrement())
+  status   Status
+  unit     String
+  quantity Int
+  date     DateTime  @default(now())
+  incoterm Incoterms
+
+  purchaseRequestId Int
+  purchaseRequest   PurchaseRequest @relation(fields: [purchaseRequestId], references: [id])
+  parentItemLogId   Int
+  parentItemLog     ItemLog         @relation(fields: [parentItemLogId], references: [id])
+}
+
+// many-to-many
+model ItemsOnSuppliers {
+  id         Int      @id @default(autoincrement())
+  itemId     Int
+  supplierId Int
+  item       Item     @relation(fields: [itemId], references: [id])
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+}
+
+model Supplier {
+  id       Int        @id @default(autoincrement())
+  name     String
+  country  String
+  category Category[]
+
+  ItemsOnSuppliers ItemsOnSuppliers[]
+  PurchaseOrder    PurchaseOrder[]
+}
+
+model Project {
+  id          Int           @id @default(autoincrement())
+  name        String
+  Transaction Transaction[]
+}
+
+model Location {
+  id      Int       @id @default(autoincrement())
+  name    String
+  ItemLog ItemLog[]
+}
+
+model Remark {
+  id      Int       @id @default(autoincrement())
+  name    String
+  ItemLog ItemLog[]
+}
+
+model Subcode {
+  value String @id
+  items Item[]
+}
+
+model PurchaseRequest {
+  id         Int          @id @default(autoincrement())
+  PriItemLog PriItemLog[]
+}
+
+model PurchaseOrder {
+  id         Int      @id @default(autoincrement())
+  supplierId Int
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+}
+
+enum Category {
+  PIPE
+  FITTING
+  VALVES
+}
+
+enum Status {
+  ISSUE_REQUEST_SENT
+  MATERIAL_REQUEST_SENT
+  PURCHASE_REQUEST_SENT
+  CHECKOUT
+  CREATING_PURCHASE_ORDER
+  PURCHASE_ORDER_SENT
+  DELIVERY
+  DELIVERED
+  ISSUE_GOOD_SENT
+  CANCELLED
+  SELECTED_FOR_CHECKOUT
+  BOOK_REQUEST
+  DECLINED
+}
+
+enum Incoterms {
+  FCA
+  CIF
+  DEP
+}

@@ -30,7 +30,32 @@ export const LogisticsNumberField: React.FC<{
     />
   );
 };
+export const LogisticsDateField: React.FC<{
+  disabled?: boolean;
+  className?: string;
+  fieldName: string;
+  onChange: (fieldName: string, val: string) => void;
+  defaultValue?: string;
+}> = ({ fieldName, onChange, className, defaultValue }) => {
+  const [selected, setSelected] = useState(defaultValue);
 
+  useEffect(() => {
+    onChange(fieldName, defaultValue);
+  }, []);
+
+  function onSelect(e) {
+    setSelected(e.target.value);
+    onChange(fieldName, e.target.value);
+  }
+  return (
+    <input
+      onChange={onSelect}
+      value={selected ?? ''}
+      className="w-full outline-none"
+      type={'date'}
+    />
+  );
+};
 export const LogisticsSelectPlainField: React.FC<{
   disabled?: boolean;
   className?: string;

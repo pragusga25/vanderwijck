@@ -1,3 +1,4 @@
+import { Category } from '@prisma/client';
 import React from 'react';
 export interface LogisticsStorageDatabaseData {
   itemCode: string;
@@ -5,15 +6,13 @@ export interface LogisticsStorageDatabaseData {
   qty: string;
   unit: string;
   location: string;
+  category: Category;
 }
 const LogisticsStorageDatabase: React.FC<{
   data: LogisticsStorageDatabaseData[];
 }> = ({ data }) => {
   return (
-    <div
-      style={{ minWidth: '900px' }}
-      className="w-full px-1 overflow-x-autoz"
-    >
+    <div style={{ minWidth: '900px' }} className="w-full px-1 overflow-x-autoz">
       <table className="w-full">
         <thead className="">
           <tr>
