@@ -4,7 +4,8 @@ import { LogisticsStorageDatabaseData } from './LogisticsStorageDatabaseTable';
 const LogisticsBookDatabase: React.FC<{
   data: LogisticsStorageDatabaseData[];
   handleCancel: (idx: number, reasons: string) => void;
-}> = ({ data, handleCancel }) => {
+  loading?: boolean;
+}> = ({ data, handleCancel, loading }) => {
   return (
     <div
       style={{ minWidth: '1000px' }}
@@ -23,8 +24,14 @@ const LogisticsBookDatabase: React.FC<{
           </tr>
         </thead>
         <tbody>
-          {data.map((e,idx) => (
-            <Row key={`row-${idx}`} data={e} idx={idx} handleCancel={handleCancel} />
+          {data.map((e, idx) => (
+            <Row
+              key={`row-${idx}`}
+              data={e}
+              idx={idx}
+              handleCancel={handleCancel}
+              loading={loading}
+            />
           ))}
         </tbody>
       </table>
@@ -34,9 +41,10 @@ const LogisticsBookDatabase: React.FC<{
 
 const Row: React.FC<{
   data: LogisticsStorageDatabaseData;
-  idx:number
+  idx: number;
   handleCancel: (idx: number, reasons: string) => void;
-}> = ({ data: e, handleCancel, idx }) => {
+  loading?: boolean;
+}> = ({ data: e, handleCancel, idx, loading }) => {
   const [reason, setReason] = useState<string>('');
   return (
     <tr>
@@ -46,9 +54,13 @@ const Row: React.FC<{
       <td className="border-black p-1 border">{e.unit}</td>
       <td className="border-black p-1 border">{e.location}</td>
       <td className="">
-        <div onClick={()=>handleCancel(idx, reason)} className="flex py-1 rounded cursor-pointer hover:bg-gray-500 w-5/6 mx-auto justify-center items-center bg-gray-400 text-white font-medium">
+        <button
+          disabled={loading}
+          onClick={() => handleCancel(idx, reason)}
+          className="flex py-1 rounded cursor-pointer hover:bg-gray-500 w-5/6 mx-auto justify-center items-center bg-gray-400 text-white font-medium"
+        >
           Cancel
-        </div>
+        </button>
       </td>
       <td className="border-black border">
         <input

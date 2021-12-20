@@ -1,15 +1,13 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
-import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
-import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
 import { ProjectStatusData } from '@components/Project/ProjectTable';
 import ProjectStatusTable from '@components/Project/ProjectTable';
 import ProjectNavigation from '@components/Project/ProjectNavigation';
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
+import { STATUS } from '@constants/index';
+
 export default function Page({ data }: { data: ProjectStatusData[] }) {
   const router = useRouter();
   return (
@@ -71,7 +69,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     qty: log.quantity + '',
     unit: log.unit + '',
     approvedBy: log.transaction.approvedBy,
-    status: log.status,
+    status: STATUS[log.status],
   }));
 
   return {

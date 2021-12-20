@@ -1,6 +1,8 @@
 import Layout from '@components/Layout';
 import Button from '@components/general/button';
 import { useRouter } from 'next/router';
+import prisma from '@lib/prisma';
+import { GetServerSideProps } from 'next';
 
 export default function Home() {
   const router = useRouter();
@@ -47,3 +49,16 @@ export default function Home() {
     </Layout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const propertyNames = Object.getOwnPropertyNames(prisma);
+  const modelNames = propertyNames.filter(
+    (propertyName) => !propertyName.startsWith('_')
+  );
+
+  Promise.all(modelNames.map((model) => prisma[model].deleteMany()));
+
+  return {
+    props: {},
+  };
+};
