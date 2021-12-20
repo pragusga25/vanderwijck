@@ -13,6 +13,7 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} ./prisma/seed.ts"
   },
   "dependencies": {
+    "@next/swc-darwin-x64": "^12.0.7",
     "@prisma/client": "^3.6.0",
     "axios": "^0.24.0",
     "goober": "^2.1.1",
