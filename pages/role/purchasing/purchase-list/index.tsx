@@ -1,22 +1,24 @@
 import { BackButton } from '@components/general/button';
 import Layout from '@components/Layout';
 import PurchaseListCard, {
-  PurchaseListCardData
+  PurchaseListCardData,
 } from '@components/Purchasing/PurchaseListCard';
 import prisma from '@lib/prisma';
+import { Status } from '@prisma/client';
+import axios from 'axios';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { STATUS } from '../../../../constants';
+import toast from 'react-hot-toast';
 
-export default function Page() {
+export default function Page({ data }) {
   const router = useRouter();
-  const data = DummyMaterialCheckout;
   const [checkedIndex, setCheckedIndex] = useState<boolean[]>(
     Array(data.length).fill(false)
   );
   const [checkAll, setCheckAll] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (checkAll) setCheckedIndex(Array(data.length).fill(true));
@@ -27,12 +29,29 @@ export default function Page() {
     const res = [...checkedIndex];
     res[idx] = check;
     setCheckedIndex(res);
+    console.log(check);
   }
 
-  function handleDecline(idx: number) {
-    console.log('Decline this Item');
-    console.log(data[idx]);
+  async function handleDecline(idx: number) {
+    await post({ prItemLogId: data[idx].id as number, isDeclined: true });
   }
+
+  async function handleAccept(idx: number) {
+    await post({ prItemLogId: data[idx].id as number, isDeclined: false });
+  }
+
+  const post = async (data: { prItemLogId: number; isDeclined: boolean }) => {
+    setLoading(true);
+    toast
+      .promise(axios.post('/api/pr/pr-list', data), {
+        loading: 'Memproses data...',
+        success: 'Data berhasil diproses',
+        error: 'Terjadi kesalahan',
+      })
+      .then(() => router.reload())
+      .catch(() => toast.error('Terjadi kesalahan'))
+      .finally(() => setLoading(false));
+  };
 
   function handleCheckout() {
     console.log('Checkout');
@@ -60,8 +79,11 @@ export default function Page() {
               Purchase List
             </h1>
           </div>
-          <div className='flex'>
-            <div onClick={handleCheckout} className="py-2 mr-8 px-8 bg-blue-venice cursor-pointer rounded text-sm text-white -end">
+          <div className="flex">
+            <div
+              onClick={handleCheckout}
+              className="py-2 mr-8 px-8 bg-blue-venice cursor-pointer rounded text-sm text-white -end"
+            >
               Accept
             </div>
             <Link href="/role/purchasing/status">
@@ -81,8 +103,9 @@ export default function Page() {
                 index={idx}
                 isChecked={e}
                 handleDecline={handleDecline}
-                handleAccept={handleDecline}
+                handleAccept={handleAccept}
                 data={data[idx]}
+                loading={loading}
               />
             ))}
           </div>
@@ -92,55 +115,44 @@ export default function Page() {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const priItemLogs = await prisma.priItemLog.findMany({
+export const getServerSideProps: GetServerSideProps = async () => {
+  const prItemLogs = await prisma.priItemLog.findMany({
+    where: {
+      status: Status.PURCHASE_REQUEST_SENT,
+    },
     select: {
+      id: true,
+      quantity: true,
       parentItemLog: {
         select: {
-          quantity: true,
-          transaction: {
-            select: {
-              project: {
-                select: {
-                  name: true
-                }
-              },
-              approvedBy: true
-            }
-            },
+          remark: true,
           item: {
             select: {
               name: true,
               avl: true,
               ItemsOnSuppliers: {
                 select: {
-                  supplier: {
-                    select: {
-                      name: true
-                    }
-                  }
-                }
-              }
-            }
+                  supplier: true,
+                },
+              },
+            },
           },
-          remark: {
-            select: {
-              name: true
-            }
-          }
         },
       },
     },
   });
 
-  const data: PurchaseListCardData[] = priItemLogs.map((log) => ({
-    projectNo: log.parentItemLog.quantity,
-    approvedBy: log.parentItemLog.transaction.project.name,
-    itemName: log.parentItemLog.transaction.approvedBy,
-    qty: log.parentItemLog.item.name,
-    avl: log.parentItemLog.item.avl,
-    remarks: log.parentItemLog.item.ItemsOnSuppliers.supplier.name,
-    suppliers: log.parentItemLog.remark.name,
+  const data = prItemLogs.map((log) => ({
+    id: log.id,
+    projectNo: 'Project 1367',
+    approvedBy: 'John Doe',
+    itemName: log.parentItemLog.item.name,
+    qty: log.quantity + '',
+    avl: log.parentItemLog.item.avl + '',
+    remarks: log.parentItemLog.remark.name,
+    suppliers: log.parentItemLog.item.ItemsOnSuppliers.map(
+      (e) => e.supplier.name
+    ),
   }));
 
   return {
@@ -148,62 +160,4 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       data,
     },
   };
-}
-
-
-const DummyMaterialCheckout: PurchaseListCardData[] = [
-  {
-    projectNo: 'Project 1367',
-    approvedBy: 'Mr. Fulan - Engineering',
-    itemName: 'Pipe Seamless- Carbon Steel sch. 40',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-    suppliers: ['google'],
-  },
-  {
-    projectNo: 'Project 1111',
-    approvedBy: 'Mr. Kucing Smith - Engineering',
-    itemName: 'Item A',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-    suppliers: ['google', 'shopee'],
-  },
-  {
-    projectNo: 'Project 2222',
-    approvedBy: 'Mr. John Doe - Engineering',
-    itemName: 'Item B',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-    suppliers: ['google', 'shopee'],
-  },
-  {
-    projectNo: 'Project 3333',
-    approvedBy: 'Mr. Ayam Bakti - Engineering',
-    itemName: 'Item C',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-    suppliers: ['google', 'shopee'],
-  },
-  {
-    projectNo: 'Project 4444',
-    approvedBy: 'Mr. Vivo - Engineering',
-    itemName: 'Item D',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-    suppliers: ['google', 'shopee'],
-  },
-  {
-    projectNo: 'Project 5555',
-    approvedBy: 'Mr. Panasonic - Engineering',
-    itemName: 'Item E',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-    suppliers: ['google', 'shopee'],
-  },
-];
+};
