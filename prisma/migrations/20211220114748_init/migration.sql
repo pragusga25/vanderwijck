@@ -2,7 +2,7 @@
 CREATE TYPE "Category" AS ENUM ('PIPE', 'FITTING', 'VALVES');
 
 -- CreateEnum
-CREATE TYPE "Status" AS ENUM ('ISSUE_REQUEST_SENT', 'MATERIAL_REQUEST_SENT', 'PURCHASE_REQUEST_SENT', 'CHECKOUT', 'CREATING_PURCHASE_ORDER', 'PURCHASE_ORDER_SENT', 'DELIVERY', 'DELIVERED', 'ISSUE_GOOD_SENT', 'CANCELLED', 'SELECTED_FOR_CHECKOUT', 'BOOK_REQUEST');
+CREATE TYPE "Status" AS ENUM ('ISSUE_REQUEST_SENT', 'MATERIAL_REQUEST_SENT', 'PURCHASE_REQUEST_SENT', 'CHECKOUT', 'CREATING_PURCHASE_ORDER', 'PURCHASE_ORDER_SENT', 'DELIVERY', 'DELIVERED', 'ISSUE_GOOD_SENT', 'CANCELLED', 'SELECTED_FOR_CHECKOUT', 'BOOK_REQUEST', 'DECLINED');
 
 -- CreateEnum
 CREATE TYPE "Incoterms" AS ENUM ('FCA', 'CIF', 'DEP');
@@ -13,7 +13,8 @@ CREATE TABLE "Item" (
     "code" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
-    "booked" INTEGER NOT NULL,
+    "avl" INTEGER NOT NULL,
+    "booked" INTEGER NOT NULL DEFAULT 0,
     "category" "Category" NOT NULL,
     "subcodeValue" TEXT NOT NULL,
 
@@ -29,17 +30,27 @@ CREATE TABLE "ItemLog" (
     "quantity" INTEGER NOT NULL,
     "rejectedReason" TEXT,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "remarkId" INTEGER NOT NULL,
     "locationId" INTEGER,
     "transactionId" INTEGER NOT NULL,
-    "purchaseRequestId" INTEGER,
 
     CONSTRAINT "ItemLog_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
+CREATE TABLE "Transaction" (
+    "id" SERIAL NOT NULL,
+    "requestedBy" TEXT NOT NULL,
+    "approvedBy" TEXT,
+    "status" "Status" NOT NULL,
+    "projectId" INTEGER NOT NULL,
+
+    CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "PriItemLog" (
     "id" SERIAL NOT NULL,
-    "itemId" INTEGER NOT NULL,
     "status" "Status" NOT NULL,
     "unit" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
@@ -65,7 +76,7 @@ CREATE TABLE "Supplier" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "country" TEXT NOT NULL,
-    "category" "Category" NOT NULL,
+    "category" "Category"[],
 
     CONSTRAINT "Supplier_pkey" PRIMARY KEY ("id")
 );
@@ -102,15 +113,6 @@ CREATE TABLE "Subcode" (
 );
 
 -- CreateTable
-CREATE TABLE "Transaction" (
-    "id" SERIAL NOT NULL,
-    "requestedBy" TEXT NOT NULL,
-    "approvalBy" TEXT,
-
-    CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "PurchaseRequest" (
     "id" SERIAL NOT NULL,
 
@@ -135,16 +137,16 @@ ALTER TABLE "Item" ADD CONSTRAINT "Item_subcodeValue_fkey" FOREIGN KEY ("subcode
 ALTER TABLE "ItemLog" ADD CONSTRAINT "ItemLog_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "Item"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "ItemLog" ADD CONSTRAINT "ItemLog_remarkId_fkey" FOREIGN KEY ("remarkId") REFERENCES "Remark"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "ItemLog" ADD CONSTRAINT "ItemLog_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "Location"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ItemLog" ADD CONSTRAINT "ItemLog_transactionId_fkey" FOREIGN KEY ("transactionId") REFERENCES "Transaction"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ItemLog" ADD CONSTRAINT "ItemLog_purchaseRequestId_fkey" FOREIGN KEY ("purchaseRequestId") REFERENCES "PurchaseRequest"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "PriItemLog" ADD CONSTRAINT "PriItemLog_itemId_fkey" FOREIGN KEY ("itemId") REFERENCES "Item"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "PriItemLog" ADD CONSTRAINT "PriItemLog_purchaseRequestId_fkey" FOREIGN KEY ("purchaseRequestId") REFERENCES "PurchaseRequest"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
