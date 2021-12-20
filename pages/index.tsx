@@ -33,7 +33,7 @@ export default function Home() {
             For Purchasing - Logistic at KTU
           </h3>
           <h3 className="text-base sm:text-xl md:text-2xl">
-            Created by Iqbal Baihaqy
+            Created by Iqbal Baihaqi
           </h3>
           <Button
             onClick={() => router.push('/role')}
