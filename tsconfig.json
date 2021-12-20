@@ -18,7 +18,8 @@
     "paths": {
       "@components/*": ["components/*"],
       "@utils/*": ["utils/*"],
-      "@lib/*": ["lib/*"]
+      "@lib/*": ["lib/*"],
+      "@constants/*": ["constants/*"]
     }
   },
   "include": [

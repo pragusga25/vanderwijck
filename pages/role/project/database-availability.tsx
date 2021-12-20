@@ -1,24 +1,31 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
-import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
-import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import ProjectCategorySearchBar, {
-  ProjectCategoryData,
-} from '@components/Project/ProjectCategorySearchBar';
 import { useState } from 'react';
 import ProjectItemCard, {
   ProjectItemCardProps,
 } from '@components/Project/ProjectItemCard';
 import { LogisticsCategoryData } from '@components/Logistics/LogisticsCategorySearchBar';
 import LogisticsCategorySearchBar from '@components/Logistics/LogisticsCategorySearchBar';
-export default function Page() {
+import { GetServerSideProps } from 'next';
+import { Category } from '@prisma/client';
+import prisma from '@lib/prisma';
+import uniq from 'lodash.uniq';
+import { dateStr } from '@utils/funcs';
+import { STATUS } from '@constants/index';
+
+export default function Page({
+  categories,
+  data: myData,
+}: {
+  categories: LogisticsCategoryData[];
+  data: ProjectItemCardProps[];
+}) {
   const router = useRouter();
   const dummyOnSearch = (data) => {
-    console.log(data);
-    setData(DummyItemcardData);
+    const name = data.e.itemName as string;
+    const item = myData.find((d) => d.itemName === name);
+    setData(item);
   };
   const [data, setData] = useState<ProjectItemCardProps>(null);
   return (
@@ -42,7 +49,7 @@ export default function Page() {
         </div>
         <div className="h-16"></div>
         <LogisticsCategorySearchBar
-          data={DummyCategoryData}
+          data={categories}
           onSearch={dummyOnSearch}
         />
         <div className="h-10"></div>
@@ -52,39 +59,67 @@ export default function Page() {
   );
 }
 
-const DummyCategoryData: LogisticsCategoryData[] = [
-  {
-    categoryName: 'Categ. 1',
-    choices: ['001 barang 1', '001 barang 2', '001 barang 3', '001 barang 4'],
-    categoryId: '1',
-  },
-  {
-    categoryName: 'Categ. 2',
-    choices: ['002 barang 1', '002 barang 2', '002 barang 3', '002 barang 4'],
-    categoryId: '2',
-  },
-  {
-    categoryName: 'Categ. 3',
-    choices: ['003 barang 1', '003 barang 2', '003 barang 3', '003 barang 4'],
-    categoryId: '3',
-  },
-  {
-    categoryName: 'Categ. 4',
-    choices: ['004 barang 1', '004 barang 2', '004 barang 3', '004 barang 4'],
-    categoryId: '4',
-  },
-];
-const DummyItemcardData: ProjectItemCardProps = {
-  itemName: 'Pipe Seamless Carbon steel',
-  itemCode: 'XXXX-XXXX-XXXX',
-  avl: '8',
-  qty: '10',
-  itemLogs: [
-    {
-      date: '19/11/2002',
-      projectNo: '20',
-      qty: '10',
-      status: 'Book',
+export const getServerSideProps: GetServerSideProps = async () => {
+  const items = await prisma.item.findMany({
+    select: {
+      avl: true,
+      category: true,
+      code: true,
+      name: true,
+      quantity: true,
+      ItemLog: {
+        select: {
+          date: true,
+          quantity: true,
+          status: true,
+        },
+      },
     },
-  ],
+  });
+
+  const pipeItems = items.filter((item) => item.category === Category.PIPE);
+  const fittingItems = items.filter(
+    (item) => item.category === Category.FITTING
+  );
+  const valvesItems = items.filter((item) => item.category === Category.VALVES);
+
+  const categories: LogisticsCategoryData[] = [
+    {
+      categoryName: Category.PIPE,
+      choices: uniq(pipeItems.map((item) => item.name)),
+      categoryId: Category.PIPE,
+    },
+    {
+      categoryName: Category.FITTING,
+      choices: uniq(fittingItems.map((item) => item.name)),
+      categoryId: Category.FITTING,
+    },
+    {
+      categoryName: Category.VALVES,
+      choices: uniq(valvesItems.map((item) => item.name)),
+      categoryId: Category.VALVES,
+    },
+  ];
+
+  const data: ProjectItemCardProps[] = items.map((item) => ({
+    itemName: item.name,
+    itemCode: item.code,
+    avl: item.avl + '',
+    qty: item.quantity + '',
+    itemLogs: item.ItemLog.map((log) => ({
+      date: dateStr(new Date(log.date)),
+      projectNo: '1376',
+      qty: log.quantity + '',
+      status: STATUS[log.status],
+    })),
+  }));
+
+  console.log(data, 'DATAAA');
+
+  return {
+    props: {
+      categories,
+      data,
+    },
+  };
 };

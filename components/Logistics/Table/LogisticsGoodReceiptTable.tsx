@@ -1,12 +1,17 @@
+import { Category } from '@prisma/client';
 import React from 'react';
 export interface LogisticsGoodReceiptData {
-  no: string;
+  // no: string;
   itemName: string;
   qty: string;
   unit: string;
   warehouse: string;
   projectNumber: string;
   transCode: string;
+  category: Category;
+  itemId: number;
+  prItemLogId: number;
+  itemLogId: number;
 }
 
 const LogisticsGoodReceiptTable: React.FC<{
@@ -38,6 +43,7 @@ const LogisticsGoodReceiptTable: React.FC<{
             <Row
               key={`row-${idx}`}
               e={e}
+              no={idx + 1}
               checkedIndex={checkedIndex}
               handleCheck={handleCheck}
               idx={idx}
@@ -54,10 +60,11 @@ const Row: React.FC<{
   handleCheck: any;
   checkedIndex: boolean[];
   e: LogisticsGoodReceiptData;
-}> = ({ idx, handleCheck, checkedIndex, e }) => {
+  no: number;
+}> = ({ idx, handleCheck, checkedIndex, e, no }) => {
   return (
     <tr>
-      <td className="border-black p-1 border text-center">{e.no}</td>
+      <td className="border-black p-1 border text-center">{no}</td>
       <td className="border-black p-1 border">{e.itemName}</td>
       <td className="border-black p-1 border">{e.qty}</td>
       <td className="border-black p-1 border">{e.unit}</td>
