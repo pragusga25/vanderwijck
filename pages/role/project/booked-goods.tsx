@@ -1,13 +1,6 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
-import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
-import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import ProjectCategorySearchBar, {
-  ProjectCategoryData,
-} from '@components/Project/ProjectCategorySearchBar';
 import { useState } from 'react';
 import Link from 'next/link';
 import ProjectBookedGoodTable, {
@@ -20,6 +13,9 @@ import prisma from '@lib/prisma';
 import { Category, Status } from '@prisma/client';
 import uniq from 'lodash.uniq';
 import { dateStr } from '@utils/funcs';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+
 export default function Page({
   categories,
   data: myData,
@@ -28,17 +24,49 @@ export default function Page({
   data: ProjectBookedGoodData[];
 }) {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const dummyOnSearch = (data) => {
     const itemName = data.e.itemName as string;
     setData(myData.filter((d) => d.itemName === itemName));
   };
-  function dummyOnIssue(x: ProjectBookedGoodData) {
-    console.log('On issue');
-    console.log(x);
+
+  async function dummyOnIssue(x: ProjectBookedGoodData) {
+    if (loading) return;
+
+    setLoading(true);
+    await toast
+      .promise(
+        axios.post('/api/project/bookedGood', {
+          dataPost: { ...x, quantity: Number(x.qty), isCanceled: false },
+        }),
+        {
+          loading: 'Memproses data...',
+          success: 'Berhasil memproses data',
+          error: 'Gagal memproses data',
+        }
+      )
+      .then(() => router.reload())
+      .catch((e) => toast.error(e.message))
+      .finally(() => setLoading(false));
   }
-  function dummyOnCancel(x: ProjectBookedGoodData) {
-    console.log('On Cancel');
-    console.log(x);
+  async function dummyOnCancel(x: ProjectBookedGoodData) {
+    if (loading) return;
+
+    setLoading(true);
+    await toast
+      .promise(
+        axios.post('/api/project/bookedGood', {
+          dataPost: { ...x, quantity: Number(x.qty), isCanceled: true },
+        }),
+        {
+          loading: 'Memproses data...',
+          success: 'Berhasil memproses data',
+          error: 'Gagal memproses data',
+        }
+      )
+      .then(() => router.reload())
+      .catch((e) => toast.error(e.message))
+      .finally(() => setLoading(false));
   }
   const [data, setData] = useState<any>(null);
   return (
@@ -76,6 +104,7 @@ export default function Page({
             data={data}
             onIssue={dummyOnIssue}
             onCancel={dummyOnCancel}
+            loading={loading}
           />
         )}
         <div className="h-10"></div>
@@ -91,10 +120,11 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
     select: {
       id: true,
-      approvedBy: true,
+      requestedBy: true,
       ItemLog: {
         select: {
           date: true,
+          id: true,
           quantity: true,
           item: {
             select: {
@@ -118,6 +148,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
       });
 
       data.push({
+        requestedBy: tr.requestedBy,
+        itemLogId: item.id,
         category: item.item.category,
         itemName: item.item.name,
         date: dateStr(new Date(item.date)),
@@ -161,59 +193,3 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
   };
 };
-
-const DummyBookedGoodData: ProjectBookedGoodData[] = [
-  {
-    date: '22/13/2002',
-    projectNo: '123',
-    category: 'Pipe',
-    itemName: 'pipa paralon 1',
-    transactionCode: '12345',
-    subcode: '54321',
-    qty: '20',
-    unit: '12',
-  },
-  {
-    date: '22/13/2002',
-    projectNo: '211',
-    category: 'Pipe',
-    itemName: 'pipa paralon 2',
-    transactionCode: '12345',
-    subcode: '54321',
-    qty: '20',
-    unit: '12',
-  },
-  {
-    date: '22/13/2002',
-    projectNo: '892',
-    category: 'Pipe',
-    itemName: 'pipa paralon 3',
-    transactionCode: '12345',
-    subcode: '54321',
-    qty: '20',
-    unit: '12',
-  },
-];
-
-// const DummyCategoryData: LogisticsCategoryData[] = [
-//   {
-//     categoryName: 'Categ. 1',
-//     choices: ['001 barang 1', '001 barang 2', '001 barang 3', '001 barang 4'],
-//     categoryId: '1',
-//   },
-//   {
-//     categoryName: 'Categ. 2',
-//     choices: ['002 barang 1', '002 barang 2', '002 barang 3', '002 barang 4'],
-//     categoryId: '2',
-//   },
-//   {
-//     categoryName: 'Categ. 3',
-//     choices: ['003 barang 1', '003 barang 2', '003 barang 3', '003 barang 4'],
-//     categoryId: '3',
-//   },
-//   {
-//     categoryName: 'Categ. 4',
-//     choices: ['004 barang 1', '004 barang 2', '004 barang 3', '004 barang 4'],
-//     categoryId: '4',
-//   },
-// ];

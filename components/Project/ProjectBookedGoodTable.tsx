@@ -9,12 +9,15 @@ export interface ProjectBookedGoodData {
   subcode: string;
   qty: string;
   unit: string;
+  itemLogId: number;
+  requestedBy: string;
 }
 const BookedGoodTable: React.FC<{
   data: ProjectBookedGoodData[];
   onIssue: (x: ProjectBookedGoodData) => void;
   onCancel: (x: ProjectBookedGoodData) => void;
-}> = ({ data, onIssue, onCancel }) => {
+  loading?: boolean;
+}> = ({ data, onIssue, onCancel, loading }) => {
   return (
     <div
       style={{ minWidth: '1300px' }}
@@ -36,8 +39,14 @@ const BookedGoodTable: React.FC<{
           </tr>
         </thead>
         <tbody>
-          {data.map((e,idx) => (
-            <Row key={"e-"+idx} e={e} onCancel={onCancel} onIssue={onIssue} />
+          {data.map((e, idx) => (
+            <Row
+              key={'e-' + idx}
+              e={e}
+              onCancel={onCancel}
+              onIssue={onIssue}
+              loading={loading}
+            />
           ))}
         </tbody>
       </table>
@@ -50,13 +59,14 @@ const Row: React.FC<{
   onIssue: (x: ProjectBookedGoodData) => void;
   onCancel: (x: ProjectBookedGoodData) => void;
   e: ProjectBookedGoodData;
-}> = ({ onCancel, onIssue, e }) => {
+  loading?: boolean;
+}> = ({ onCancel, onIssue, e, loading }) => {
   const { register, getValues } = useForm();
-  const handleIssue = () => {
-    onIssue(getValues('e') as ProjectBookedGoodData);
+  const handleIssue = (e: ProjectBookedGoodData) => {
+    onIssue({ ...e, ...getValues('e') } as ProjectBookedGoodData);
   };
-  const handleCancel = () => {
-    onCancel(getValues('e') as ProjectBookedGoodData);
+  const handleCancel = (e: ProjectBookedGoodData) => {
+    onCancel({ ...e, ...getValues('e') } as ProjectBookedGoodData);
   };
   return (
     <tr className="break-all">
@@ -133,20 +143,22 @@ const Row: React.FC<{
         {e.unit}
       </td>
       <td>
-        <div
-          onClick={handleIssue}
+        <button
+          disabled={loading}
+          onClick={() => handleIssue(e)}
           className="bg-blue-astronaut py-1 cursor-pointer rounded-lg w-full h-full flex justify-center items-center text-white font-medium"
         >
           Issue
-        </div>
+        </button>
       </td>
       <td>
-        <div
-          onClick={handleCancel}
+        <button
+          disabled={loading}
+          onClick={() => handleCancel(e)}
           className="bg-gray-500 py-1 cursor-pointer rounded-lg w-full h-full flex justify-center items-center text-white font-medium"
         >
           Cancel
-        </div>
+        </button>
       </td>
     </tr>
   );
