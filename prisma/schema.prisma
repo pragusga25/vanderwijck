@@ -23,7 +23,7 @@ model Item {
   Subcode          Subcode            @relation(fields: [subcodeValue], references: [value])
   subcodeValue     String
   ItemLog          ItemLog[]
-  PriItemLog       PriItemLog[]
+
 }
 
 model ItemLog {
@@ -38,13 +38,11 @@ model ItemLog {
   remarkId       Int
   remark         Remark   @relation(fields: [remarkId], references: [id])
 
-  locationId        Int?
-  location          Location?        @relation(fields: [locationId], references: [id])
-  transactionId     Int
-  transaction       Transaction      @relation(fields: [transactionId], references: [id])
-  purchaseRequestId Int?
-  purchaseRequest   PurchaseRequest? @relation(fields: [purchaseRequestId], references: [id])
-  PriItemLog        PriItemLog[]
+  locationId    Int?
+  location      Location?    @relation(fields: [locationId], references: [id])
+  transactionId Int
+  transaction   Transaction  @relation(fields: [transactionId], references: [id])
+  PriItemLog    PriItemLog[]
 }
 
 model Transaction {
@@ -60,8 +58,6 @@ model Transaction {
 
 model PriItemLog {
   id       Int       @id @default(autoincrement())
-  itemId   Int
-  item     Item      @relation(fields: [itemId], references: [id])
   status   Status
   unit     String
   quantity Int
@@ -118,7 +114,6 @@ model Subcode {
 
 model PurchaseRequest {
   id         Int          @id @default(autoincrement())
-  ItemLog    ItemLog[]
   PriItemLog PriItemLog[]
 }
 

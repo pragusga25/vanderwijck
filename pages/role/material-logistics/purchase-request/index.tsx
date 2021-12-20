@@ -10,9 +10,15 @@ import LogisticsPurchaseRequest, {
 } from '@components/Logistics/Table/LogisticsPurchaseRequest';
 import { useState } from 'react';
 import Link from 'next/link';
-export default function Page() {
+import { GetServerSideProps } from 'next';
+import prisma from '@lib/prisma';
+import { Status } from '@prisma/client';
+export default function Page({
+  data,
+}: {
+  data: LogisticsPurchaseRequestData[];
+}) {
   const router = useRouter();
-  const data = DummyData;
   const [checkedIndex, setCheckedIndex] = useState<boolean[]>(
     Array(data.length).fill(false)
   );
@@ -39,9 +45,7 @@ export default function Page() {
             <BackButton
               message=""
               customClassName="font-bold px-4 py-3 text-black"
-              onClick={() =>
-                router.push('/role/material-logistics')
-              }
+              onClick={() => router.push('/role/material-logistics')}
             />
             <h1 className="ml-4 text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
               Purchase Request
@@ -56,7 +60,7 @@ export default function Page() {
         <LogisticsPurchaseRequest
           handleChecked={handleChecked}
           checkedIndex={checkedIndex}
-          data={DummyData}
+          data={data}
         />
         <div className="w-full flex justify-end">
           <div
@@ -71,26 +75,70 @@ export default function Page() {
   );
 }
 
-const DummyData: LogisticsPurchaseRequestData[] = [
-  {
-    projectNo: '1',
-    itemCode: 'XXXX',
-    itemName: 'kucing',
-    qty: '20',
-    remarks: 'Lorem ipsum',
-  },
-  {
-    projectNo: '1',
-    itemCode: 'XXXX',
-    itemName: 'kucing',
-    qty: '20',
-    remarks: 'Lorem ipsum',
-  },
-  {
-    projectNo: '1',
-    itemCode: 'XXXX',
-    itemName: 'kucing',
-    qty: '20',
-    remarks: 'Lorem ipsum Lorem ipsum Lorem ipsum',
-  },
-];
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const itemLogs = await prisma.itemLog.findMany({
+    where: {
+      status: Status.MATERIAL_REQUEST_SENT,
+    },
+    select: {
+      id: true,
+      transaction: {
+        select: {
+          id: true,
+        },
+      },
+      item: {
+        select: {
+          name: true,
+          code: true,
+          id: true,
+        },
+      },
+      quantity: true,
+      remark: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  const data: LogisticsPurchaseRequestData[] = itemLogs?.map((log) => ({
+    projectNo: '1367',
+    itemName: log.item.name,
+    qty: log.quantity + '',
+    remarks: log.remark.name,
+    itemLogId: log.id,
+    itemCode: log.item.code,
+  }));
+
+  return {
+    props: {
+      data,
+    },
+  };
+};
+
+// const DummyData: LogisticsPurchaseRequestData[] = [
+//   {
+//     projectNo: '1',
+//     itemCode: 'XXXX',
+//     itemName: 'kucing',
+//     qty: '20',
+//     remarks: 'Lorem ipsum',
+//   },
+//   {
+//     projectNo: '1',
+//     itemCode: 'XXXX',
+//     itemName: 'kucing',
+//     qty: '20',
+//     remarks: 'Lorem ipsum',
+//   },
+//   {
+//     projectNo: '1',
+//     itemCode: 'XXXX',
+//     itemName: 'kucing',
+//     qty: '20',
+//     remarks: 'Lorem ipsum Lorem ipsum Lorem ipsum',
+//   },
+// ];
