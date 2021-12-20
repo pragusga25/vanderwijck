@@ -6,6 +6,8 @@ export interface LogisticsPurchaseRequestData {
   itemName: string;
   qty: string;
   remarks: string;
+  itemLogId: number;
+  unit: string;
 }
 
 const LogisticsPurchaseRequest: React.FC<{

@@ -11,13 +11,22 @@ import LogisticsMaterialCheckoutCard, {
 import { useEffect, useState } from 'react';
 import LogisticsCheckoutSummary from '@components/Logistics/LogisticsCheckoutSummary';
 import Link from 'next/link';
-export default function Page() {
+import { GetServerSideProps } from 'next';
+import prisma from '@lib/prisma';
+import { Status } from '@prisma/client';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+export default function Page({
+  data,
+}: {
+  data: LogisticsMaterialCheckoutCardData[];
+}) {
   const router = useRouter();
-  const data = DummyMaterialCheckout;
   const [checkedIndex, setCheckedIndex] = useState<boolean[]>(
     Array(data.length).fill(false)
   );
   const [checkAll, setCheckAll] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (checkAll) setCheckedIndex(Array(data.length).fill(true));
@@ -30,15 +39,71 @@ export default function Page() {
     setCheckedIndex(res);
   }
 
-  function handleDecline(idx: number) {
+  async function handleDecline(idx: number) {
     console.log('Decline this Item');
     console.log(data[idx]);
+    try {
+      await axios.post('/api/ml/materialCheckout', {
+        dataPost: [
+          {
+            id: data[idx].id,
+            quantity: Number(data[idx].qty),
+            itemId: data[idx].itemId,
+          },
+        ],
+        isDecline: true,
+      });
+
+      toast.success('Decline Success');
+      router.reload();
+    } catch (err) {
+      toast.error('Decline Failed');
+    }
   }
 
-  function handleCheckout() {
+  async function handleCheckout() {
     console.log('Checkout');
     console.log(data.filter((e, idx) => checkedIndex[idx]));
-    router.push('/role/material-logistics/material-checkout/revision')
+    const filteredData = data.filter((e, idx) => checkedIndex[idx]);
+
+    if (filteredData.length === 0)
+      return toast.error('Silakan pilih item yang akan dicheckout');
+
+    const dataPost = [];
+    let avlExceed = false;
+
+    filteredData.forEach((d) => {
+      const avl = Number(d.avl);
+      const quantity = Number(d.qty);
+
+      console.log(avl, quantity);
+      if (quantity > avl) {
+        avlExceed = true;
+        toast.error('Jumlah yang di-checkout melebihi stok yang tersedia');
+        return;
+      }
+
+      dataPost.push({ id: d.id, quantity: quantity, itemId: d.itemId });
+    });
+
+    if (avlExceed || dataPost.length === 0) return;
+
+    try {
+      setLoading(true);
+      await axios.post('/api/ml/materialCheckout', {
+        dataPost,
+        isDecline: false,
+      });
+
+      console.log('HOLY FUCKK');
+
+      toast.success('Checkout Success');
+      router.reload();
+    } catch (err) {
+      toast.error('Checkout Failed');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -98,7 +163,12 @@ export default function Page() {
               />
             ))}
           </div>
-          <div className="w-1/4">
+          <div
+            className="w-1/4"
+            style={{
+              pointerEvents: loading ? 'none' : 'auto',
+            }}
+          >
             <LogisticsCheckoutSummary
               data={data}
               checked={checkedIndex}
@@ -111,53 +181,48 @@ export default function Page() {
   );
 }
 
-const DummyMaterialCheckout: LogisticsMaterialCheckoutCardData[] = [
-  {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const itemLogs = await prisma.itemLog.findMany({
+    where: {
+      status: Status.ISSUE_REQUEST_SENT,
+    },
+    select: {
+      id: true,
+      transaction: {
+        select: {
+          approvedBy: true,
+        },
+      },
+      item: {
+        select: {
+          name: true,
+          avl: true,
+          id: true,
+        },
+      },
+      quantity: true,
+      remark: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  const data: LogisticsMaterialCheckoutCardData[] = itemLogs?.map((log) => ({
     projectNo: 'Project 1367',
-    approvedBy: 'Mr. Fulan - Engineering',
-    itemName: 'Pipe Seamless- Carbon Steel sch. 40',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-  },
-  {
-    projectNo: 'Project 1111',
-    approvedBy: 'Mr. Kucing Smith - Engineering',
-    itemName: 'Item A',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-  },
-  {
-    projectNo: 'Project 2222',
-    approvedBy: 'Mr. John Doe - Engineering',
-    itemName: 'Item B',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-  },
-  {
-    projectNo: 'Project 3333',
-    approvedBy: 'Mr. Ayam Bakti - Engineering',
-    itemName: 'Item C',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-  },
-  {
-    projectNo: 'Project 4444',
-    approvedBy: 'Mr. Vivo - Engineering',
-    itemName: 'Item D',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-  },
-  {
-    projectNo: 'Project 5555',
-    approvedBy: 'Mr. Panasonic - Engineering',
-    itemName: 'Item E',
-    qty: '8',
-    avl: '8',
-    remarks: 'For Ballast System Reparation',
-  },
-];
+    approvedBy: log.transaction.approvedBy,
+    itemName: log.item.name,
+    qty: log.quantity + '',
+    avl: log.item.avl + '',
+    remarks: log.remark.name,
+    id: log.id,
+    itemId: log.item.id,
+  }));
+
+  return {
+    props: {
+      data,
+    },
+  };
+};

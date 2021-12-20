@@ -1,12 +1,18 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
-import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
-import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import LogisticsPurchaseRequest, {LogisticsPurchaseRequestStatusData} from '@components/Logistics/Table/LogisticsPurchaseRequestStatus';
-export default function Page() {
+import LogisticsPurchaseRequest, {
+  LogisticsPurchaseRequestStatusData,
+} from '@components/Logistics/Table/LogisticsPurchaseRequestStatus';
+import { GetServerSideProps } from 'next';
+import prisma from '@lib/prisma';
+import { STATUS } from '@constants/index';
+
+export default function Page({
+  data,
+}: {
+  data: LogisticsPurchaseRequestStatusData[];
+}) {
   const router = useRouter();
   return (
     <Layout
@@ -21,39 +27,55 @@ export default function Page() {
           <BackButton
             message=""
             customClassName="font-bold px-4 py-3 text-black"
-            onClick={() => router.push('/role/material-logistics/purchase-request')}
+            onClick={() =>
+              router.push('/role/material-logistics/purchase-request')
+            }
           />
           <h1 className="ml-4 text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
             Purchase Request
           </h1>
         </div>
         <h1 className="font-bold text-2xl mt-10 mb-16 xl:text-4xl">Status</h1>
-        <LogisticsPurchaseRequest data={DummyData} />
+        <LogisticsPurchaseRequest data={data} />
       </div>
     </Layout>
   );
 }
 
-const DummyData: LogisticsPurchaseRequestStatusData[] = [
-  {
-    projectNo: '1',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    purchaseRequestNumber:"XXX-XXXX",
-    status:"Sukses"
-  },
-  {
-    projectNo: '1',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    purchaseRequestNumber:"XXX-XXXX",
-    status:"Sukses"
-  },
-  {
-    projectNo: '1',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    purchaseRequestNumber:"XXX-XXXX",
-    status:"Sukses"
-  },
-];
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const prItemLogs = await prisma.priItemLog.findMany({
+    select: {
+      id: true,
+      purchaseRequestId: true,
+      status: true,
+      parentItemLog: {
+        select: {
+          transaction: {
+            select: {
+              id: true,
+            },
+          },
+          item: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const data: LogisticsPurchaseRequestStatusData[] = prItemLogs.map((d) => ({
+    projectNo: '1367',
+    itemName: d.parentItemLog.item.name,
+    status: STATUS[d.status],
+    transactionNumber: d.parentItemLog.transaction.id + '',
+    purchaseRequestNumber: d.purchaseRequestId + '',
+  }));
+
+  return {
+    props: {
+      data,
+    },
+  };
+};

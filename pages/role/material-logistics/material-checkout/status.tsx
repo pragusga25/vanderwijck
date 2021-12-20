@@ -5,9 +5,18 @@ import { useRouter } from 'next/router';
 // import {Bg} from "@components/general/button"
 import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
-import LogisticsMaterialCheckout, {LogisticsMaterialCheckoutData} from '@components/Logistics/Table/LogisticsMaterialCheckOutTable';
+import LogisticsMaterialCheckout, {
+  LogisticsMaterialCheckoutData,
+} from '@components/Logistics/Table/LogisticsMaterialCheckOutTable';
+import { GetServerSideProps } from 'next';
+import prisma from '@lib/prisma';
+import { STATUS } from '@constants/index';
 
-export default function Page() {
+export default function Page({
+  data,
+}: {
+  data: LogisticsMaterialCheckoutData[];
+}) {
   const router = useRouter();
   return (
     <Layout
@@ -22,45 +31,42 @@ export default function Page() {
           <BackButton
             message=""
             customClassName="font-bold px-4 py-3 text-black"
-            onClick={() => router.push('/role/material-logistics/material-checkout')}
+            onClick={() =>
+              router.push('/role/material-logistics/material-checkout')
+            }
           />
           <h1 className="ml-4 text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
             Material Checkout - Good Issue
           </h1>
         </div>
         <h1 className="font-bold text-2xl mt-10 mb-16 xl:text-4xl">Status</h1>
-        <LogisticsMaterialCheckout data={DummyData} />
+        <LogisticsMaterialCheckout data={data} />
       </div>
     </Layout>
   );
 }
 
-const DummyData: LogisticsMaterialCheckoutData[] = [
-  {
-    projectNo: '1',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    status: 'sukses',
-
-  },
-  {
-    projectNo: '32',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    status: 'sukses',
-    
-  },
-  {
-    projectNo: '12',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    status: 'sukses',
-  },
-  {
-    projectNo: '29',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    status: 'sukses',
-    
-  },
-];
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const itemLogs = await prisma.itemLog.findMany({
+    select: {
+      transactionId: true,
+      item: {
+        select: {
+          name: true,
+        },
+      },
+      status: true,
+    },
+  });
+  const data: LogisticsMaterialCheckoutData[] = itemLogs.map((d) => ({
+    projectNo: '1367',
+    transactionNumber: d.transactionId + '',
+    itemName: d.item.name,
+    status: STATUS[d.status],
+  }));
+  return {
+    props: {
+      data,
+    },
+  };
+};

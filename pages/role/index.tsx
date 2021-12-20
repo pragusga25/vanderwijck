@@ -1,8 +1,6 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
 import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
 
 export default function Home() {
   const router = useRouter();
@@ -27,14 +25,16 @@ export default function Home() {
             customClassName="py-2 px-6 sm:py-4 md:py-5 text-center flex justify-center items-center sm:px-9 mt-3 sm:mt-4 xl:w-80 lg:w-72 md:w-60 w-72 mb-2"
             colorScheme="astronaut"
           >
-            <h4 className="font-bold md:text-lg uppercase" >Project</h4>
+            <h4 className="font-bold md:text-lg uppercase">Project</h4>
           </Button>
           <Button
             onClick={() => router.push('/role/material-logistics')}
             customClassName="py-2 px-6 sm:py-4 md:py-5 text-center flex justify-center items-center sm:px-9 mt-3 sm:mt-4 xl:w-80 lg:w-72 md:w-60 w-72 mb-2"
             colorScheme="nevada"
           >
-            <h4 className="font-bold md:text-lg uppercase" >Material & Logistics</h4>
+            <h4 className="font-bold md:text-lg uppercase">
+              Material & Logistics
+            </h4>
           </Button>
           <Button
             onClick={() => router.push('/role/purchasing')}
@@ -45,12 +45,12 @@ export default function Home() {
           </Button>
         </div>
         <Button
-            onClick={() => router.push('/role/help')}
-            customClassName="py-2 px-6 mx-auto sm:py-3 text-center flex justify-center items-center sm:px-9 mt-3 sm:mt-4 xl:w-60 lg:w-56 md:w-52 w-32"
-            colorScheme="mine-shaft"
-          >
-            <h4 className="font-bold uppercase">Help</h4>
-          </Button>
+          onClick={() => router.push('/role/help')}
+          customClassName="py-2 px-6 mx-auto sm:py-3 text-center flex justify-center items-center sm:px-9 mt-3 sm:mt-4 xl:w-60 lg:w-56 md:w-52 w-32"
+          colorScheme="mine-shaft"
+        >
+          <h4 className="font-bold uppercase">Help</h4>
+        </Button>
       </div>
     </Layout>
   );

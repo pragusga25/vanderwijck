@@ -1,9 +1,5 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
-import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
-import { roleType } from '@components/Layout';
 import Link from 'next/link';
 import { BackButton } from '@components/general/button';
 import LogisticsCategorySearchBar, {
@@ -13,13 +9,30 @@ import LogisticsStorageDatabase, {
   LogisticsStorageDatabaseData,
 } from '@components/Logistics/Table/LogisticsStorageDatabaseTable';
 import { useState } from 'react';
+import { GetServerSideProps } from 'next';
+import prisma from '@lib/prisma';
+import { Category } from '@prisma/client';
+import uniq from 'lodash.uniq';
 
-export default function Page() {
+export default function Page({
+  categories,
+  databases,
+}: {
+  categories: LogisticsCategoryData[];
+  databases: LogisticsStorageDatabaseData[];
+}) {
   const router = useRouter();
   const [data, setData] = useState<LogisticsStorageDatabaseData[]>(null);
   const handleSearch = (formData) => {
-    console.log(formData);
-    setData(DummyDatabaseData);
+    const filter = formData.e;
+    const categoryId: Category = filter.categoryId;
+    const itemName = filter.itemName as string;
+
+    setData(
+      databases.filter(
+        (d) => d.itemName === itemName && d.category === categoryId
+      )
+    );
   };
   return (
     <Layout
@@ -42,7 +55,8 @@ export default function Page() {
         </div>
         <div className="w-full flex mt-10 gap-x-6">
           <LogisticsCategorySearchBar
-            data={DummyCategoryData}
+            data={categories}
+            // data={DummyCategoryData}
             onSearch={handleSearch}
           />
           <Link href="/role/material-logistics/storage-database/good-receipt">
@@ -67,62 +81,82 @@ export default function Page() {
     </Layout>
   );
 }
-const DummyCategoryData: LogisticsCategoryData[] = [
-  {
-    categoryName: 'PO 001',
-    choices:['001 barang 1', '001 barang 2', '001 barang 3', '001 barang 4'],
-    categoryId: '1',
-  },
-  {
-    categoryName: 'PO 002',
-    choices:['002 barang 1', '002 barang 2', '002 barang 3', '002 barang 4'],
-    categoryId: '2',
-  },
-  {
-    categoryName: 'PO 003',
-    choices:['003 barang 1', '003 barang 2', '003 barang 3', '003 barang 4'],
-    categoryId: '3',
-  },
-  {
-    categoryName: 'PO 004',
-    choices:['004 barang 1', '004 barang 2', '004 barang 3', '004 barang 4'],
-    categoryId: '4',
-  },
-];
-const DummyDatabaseData: LogisticsStorageDatabaseData[] = [
-  {
-    itemCode: 'XXXX',
-    itemName: 'Item 1',
-    qty: '20',
-    unit: '20',
-    location: 'Jakarta',
-  },
-  {
-    itemCode: 'XXXX',
-    itemName: 'Item 2',
-    qty: '20',
-    unit: '20',
-    location: 'Jakarta',
-  },
-  {
-    itemCode: 'XXXX',
-    itemName: 'Item 3',
-    qty: '20',
-    unit: '20',
-    location: 'Jakarta',
-  },
-  {
-    itemCode: 'XXXX',
-    itemName: 'Item 4',
-    qty: '20',
-    unit: '20',
-    location: 'Jakarta',
-  },
-  {
-    itemCode: 'XXXX',
-    itemName: 'Item 5',
-    qty: '20',
-    unit: '20',
-    location: 'Jakarta',
-  },
-];
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const prs = await prisma.purchaseRequest.findMany({
+    select: {
+      PriItemLog: {
+        select: {
+          parentItemLog: {
+            select: {
+              location: {
+                select: {
+                  name: true,
+                },
+              },
+              item: {
+                select: {
+                  name: true,
+                  category: true,
+                  code: true,
+                  quantity: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const items: { name: string; category: Category }[] = [];
+  const databases: LogisticsStorageDatabaseData[] = [];
+
+  prs.forEach((pr) => {
+    pr.PriItemLog.forEach((it) => {
+      items.push({ ...it.parentItemLog.item });
+      databases.push({
+        itemCode: it.parentItemLog.item.code,
+        itemName: it.parentItemLog.item.name,
+        qty: it.parentItemLog.item.quantity + '',
+        unit:
+          it.parentItemLog.item.category === Category.PIPE ? 'meter' : 'pcs',
+        location: it.parentItemLog.location?.name ?? 'Warehouse Tanjung Riau',
+        category: it.parentItemLog.item.category,
+      });
+    });
+  });
+
+  const pipeItems = items.filter((item) => item.category === Category.PIPE);
+
+  const fittingItems = items.filter(
+    (item) => item.category === Category.FITTING
+  );
+
+  const valvesItems = items.filter((item) => item.category === Category.VALVES);
+
+  const categories: LogisticsCategoryData[] = [
+    {
+      categoryName: Category.PIPE,
+      choices: uniq(pipeItems.map((item) => item.name)),
+      categoryId: Category.PIPE,
+    },
+    {
+      categoryName: Category.FITTING,
+      choices: uniq(fittingItems.map((item) => item.name)),
+      categoryId: Category.FITTING,
+    },
+    {
+      categoryName: Category.VALVES,
+      choices: uniq(valvesItems.map((item) => item.name)),
+      categoryId: Category.VALVES,
+    },
+  ];
+
+  return {
+    props: {
+      categories,
+      databases,
+    },
+  };
+};

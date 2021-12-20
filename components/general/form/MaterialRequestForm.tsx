@@ -6,80 +6,138 @@ import {
   UseFormSetValue,
 } from 'react-hook-form';
 import { TextField } from './TextField';
-import { SelectField } from './SelectField';
 import { SelectPlainField } from './SelectPlainField';
-import { SelectObject } from './SelectField';
+import { Remark, Status } from '@prisma/client';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 export interface ItemProps {
   itemName: string;
   itemId: string;
-  subcode: SelectObject[];
+  // subcode: SelectObject[];
   avl: number;
 }
 
-const MaterialRequestForm: React.FC<{ data: ItemProps[] }> = ({ data }) => {
-  const { register, handleSubmit, getValues, setValue } = useForm();
-  const [materials, addMaterials] = useState<any[]>(['']);
+const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
+  ({ data, remarks }) => {
+    const { register, getValues, setValue } = useForm();
+    const [materials, addMaterials] = useState<any[]>(['']);
+    const [loading, setLoading] = useState(false);
 
-  const addMaterialField = () => addMaterials(materials.concat([''])); // ini cm buat nambahin field material doang
+    const addMaterialField = () => addMaterials(materials.concat([''])); // ini cm buat nambahin field material doang
 
-  function handleSend() {
-    console.log('On Send');
-    console.log(getValues('e'));
-  }
+    function handleSend(e) {
+      e.preventDefault();
+      const vals = getValues('e');
+      const dataPost = [];
 
-  return (
-    <div className="w-full border-black mt-8">
-      <form>
-        <div className="flex flex-wrap gap-x-6">
-          <TextField
-            register={register}
-            fieldLabel="Project No:"
-            fieldName="e.projectNo"
-            className="md:w-52 lg:w-64 text-lg"
-          />
-          <TextField
-            register={register}
-            fieldLabel="Requested By:"
-            fieldName="e.requestedBy"
-            className="md:w-52  lg:w-64 text-lg"
-          />
-          <TextField
-            register={register}
-            fieldLabel="Approved By:"
-            fieldName="e.approvedBy"
-            className="md:w-52  lg:w-64 text-lg"
-          />
-        </div>
-        {materials.map((e, idx) => (
-          <Material
-            key={`material-${idx}`}
-            setValue={setValue}
-            data={data}
-            register={register}
-            no={++idx}
-          />
-        ))}
-        <div className="flex items-center justify-between mt-12">
-          <img
-            src="/role/add.png"
-            alt=""
-            onClick={addMaterialField}
-            className="w-10 h-10 md:w-16 md:h-16 cursor-pointer transform ease-in-out duration-300 hover:scale-110"
-          />
-          <div className="flex gap-x-3 md:gap-x-6">
-            <div
-              onClick={handleSend}
-              className="flex justify-center items-center px-6 outline-none cursor-pointer font-medium transform ease-in-out duration-500 hover:bg-blue-venice text-white rounded-2xl py-1 sm:px-6 sm:py-1.5 lg:px-9 lg:py-2 bg-blue-astronaut"
-            >
-              Send
+      if (!vals.requestedBy) {
+        return toast.error('Silkan lengkapi form terlebih dahulu');
+      }
+
+      for (const val in vals) {
+        if (val.startsWith('material-')) {
+          const itemId = vals[val]['item-name'];
+          const quantity = vals[val]['qty'];
+          const remarkId = vals[val]['remark'];
+
+          const avl = data.find((item) => item.itemId === itemId).avl;
+
+          if (!itemId || !quantity || !remarkId) {
+            return toast.error('Silkan lengkapi form terlebih dahulu');
+          }
+
+          if (Number(quantity) > avl) {
+            return toast.error(
+              'Quantity tidak boleh melebihi jumlah barang yang tersedia'
+            );
+          }
+
+          const itemName =
+            data
+              .find((d) => d.itemId === itemId)
+              ?.itemName?.toLocaleLowerCase() ?? '';
+
+          const unit = itemName?.startsWith('pipe') ? 'm' : 'pcs';
+
+          dataPost.push({
+            quantity: Number(quantity as string),
+            unit,
+            status: Status.MATERIAL_REQUEST_SENT,
+            itemId: Number(itemId as string),
+            remarkId: Number(remarkId),
+          });
+        }
+      }
+
+      const URL = '/api/project/materialRequest';
+
+      setLoading(true);
+      toast
+        .promise(
+          axios.post(URL, {
+            dataPost,
+            requestedBy: vals.requestedBy as string,
+          }),
+          {
+            success: 'Data berhasil dibuat',
+            error: 'Data gagal dibuat',
+            loading: 'Membuat data...',
+          }
+        )
+        .finally(() => setLoading(false));
+    }
+
+    return (
+      <div className="w-full border-black mt-8">
+        <form>
+          <div className="flex flex-wrap gap-x-6">
+            <TextField
+              register={register}
+              value="1367"
+              disabled={true}
+              fieldLabel="Project No:"
+              fieldName="e.projectNo"
+              className="md:w-52 lg:w-64 text-lg"
+            />
+            <TextField
+              register={register}
+              fieldLabel="Requested By:"
+              fieldName="e.requestedBy"
+              className="md:w-52  lg:w-64 text-lg"
+            />
+          </div>
+          {materials.map((e, idx) => (
+            <Material
+              key={`material-${idx}`}
+              setValue={setValue}
+              data={data}
+              register={register}
+              no={++idx}
+              remarks={remarks}
+            />
+          ))}
+          <div className="flex items-center justify-between mt-12">
+            <img
+              src="/role/add.png"
+              alt=""
+              onClick={addMaterialField}
+              className="w-10 h-10 md:w-16 md:h-16 cursor-pointer transform ease-in-out duration-300 hover:scale-110"
+            />
+            <div className="flex gap-x-3 md:gap-x-6">
+              <button
+                onClick={handleSend}
+                disabled={loading}
+                className="flex justify-center items-center px-6 outline-none cursor-pointer font-medium transform ease-in-out duration-500 hover:bg-blue-venice text-white rounded-2xl py-1 sm:px-6 sm:py-1.5 lg:px-9 lg:py-2 bg-blue-astronaut"
+              >
+                Send
+              </button>
             </div>
           </div>
-        </div>
-      </form>
-    </div>
-  );
-};
+        </form>
+      </div>
+    );
+  };
 export default MaterialRequestForm;
 
 const Material: React.FC<{
@@ -87,15 +145,22 @@ const Material: React.FC<{
   no: number;
   data: ItemProps[];
   setValue: UseFormSetValue<FieldValues>;
-}> = ({ register, no, data, setValue }) => {
+  remarks: Remark[];
+}> = ({ register, no, data, setValue, remarks }) => {
   const [activeItem, setActiveItem] = useState<ItemProps>(null);
 
   function onItemChange(itemId: string) {
     setValue(`e.material-${no}.item-name`, itemId);
-    onSubcodeChange('')
+    onSubcodeChange('');
     setActiveItem(data.find((e) => e.itemId == itemId));
   }
-  
+
+  function onRemarkChange(remarkId: string) {
+    setValue(`e.material-${no}.remark`, remarkId);
+    onSubcodeChange('');
+    // setActiveItem(data.find((e) => e.remarkId == remarkId));
+  }
+
   function onSubcodeChange(subcode: string) {
     setValue(`e.material-${no}.subcode`, subcode);
   }
@@ -141,35 +206,28 @@ const Material: React.FC<{
             fieldName={`e.material-${no}.avl`}
             className="w-full text-lg"
             disabled
-            value={ `${activeItem?.avl ?? ''}`}
+            value={`${activeItem?.avl ?? ''}`}
           />
         </div>
       </div>
       <div className="grid grid-cols-12 my-2">
         <div className="col-span-12 md:col-span-8">
-          <TextField
-            register={register}
-            fieldLabel="Remarks:"
-            fieldName={`e.material-${no}.remarks`}
-            className="w-full text-lg"
-          />
-        </div>
-        <div className="hidden md:block md:col-span-1"></div>
-        <div className="col-span-5 md:col-span-3">
           <label
-            htmlFor={`e.material-${no}.subcode`}
-            className=" md:mt-0 mt-3 mb-1 md:mb-4 xl:mb-6 font-medium text-lg block"
+            htmlFor={`e.material-${no}.remarks`}
+            className=" mb-2 mt-4 font-medium text-lg block"
           >
-            {'Subcode:'}
+            {'Remarks:'}
           </label>
-
           <SelectPlainField
-            onChange={onSubcodeChange}
-            subcode
+            onChange={onRemarkChange}
+            placeHolder="Remarks"
             className=" w-full text-lg "
-            choices={
-              data.find((e) => e.itemId == activeItem?.itemId)?.subcode ?? []
-            }
+            choices={remarks.map((e) => {
+              return {
+                value: e.id + '',
+                text: e.name,
+              };
+            })}
           />
         </div>
       </div>
