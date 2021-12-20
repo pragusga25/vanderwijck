@@ -25,6 +25,13 @@ export default function Page({
   const [data, setData] = useState<any>(null);
   const router = useRouter();
   const dummyOnSearch = (data) => {
+    // Somehow the `data` here is just 1 object, even tho I don't use [0] anymore when processing data:
+  //   {
+  //     "e": {
+  //         "categoryId": "1",
+  //         "itemName": "Pipe Seamless 40A C.Steel Sch.40"
+  //     }
+  // }
     const name = data.e.itemName as string;
     const item = myData.find((d) => d.itemName === name);
     if (item) {
@@ -87,28 +94,28 @@ const DummyCategoryData: LogisticsCategoryData[] = [
 ];
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const items = await prisma.item.findMany({
+  const items = await prisma.itemsOnSuppliers.findMany({
     select: {
-      id: true,
-      name: true,
-      ItemsOnSuppliers: {
+      supplier: {
         select: {
-          supplier: {
-            select: {
-              name: true,
-              country: true
-            }
-          }
+          name: true,
+          country: true
         }
       },
+      item: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
     },
   });
 
   const data: PurchasingSupplierData[] = items.map((log) => ({
-    itemType: log.id,
-    itemName: log.name+'',
-    supplier: log.ItemsOnSuppliers[0].supplier.name+'',
-    location: log.ItemsOnSuppliers[0].supplier.country+''
+    itemType: log.item.id,
+    itemName: log.item.name+'',
+    supplier: log.supplier.name+'',
+    location: log.supplier.country+''
   }));
 
   return {

@@ -8,7 +8,7 @@ Table Item {
   name String [not null]
   quantity Int [not null]
   avl Int [not null]
-  booked Int [not null]
+  booked Int [not null, default: 0]
   category Category [not null]
   ItemsOnSuppliers ItemsOnSuppliers [not null]
   Subcode Subcode [not null]
