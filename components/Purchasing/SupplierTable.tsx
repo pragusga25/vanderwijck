@@ -1,6 +1,6 @@
 import React from 'react';
 export interface PurchasingSupplierData {
-  itemType: string;
+  itemType: number;
   itemName: string;
   supplier: string;
   location: string;
@@ -8,6 +8,7 @@ export interface PurchasingSupplierData {
 const PurchasingSupplierTable: React.FC<{ data: PurchasingSupplierData[] }> = ({
   data,
 }) => {
+  console.log(data)
   return (
     <div
       style={{ minWidth: '900px' }}

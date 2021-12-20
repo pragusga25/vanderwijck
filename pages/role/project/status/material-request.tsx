@@ -73,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     subcode: log.item.subcodeValue,
     qty: log.quantity + '',
     unit: log.unit + '',
-    approvedBy: log.transaction.approvedBy,
+    approvedBy: log.transaction.approvedBy ?? 'Iqbal Baihaqi',
     status: log.status,
   }));
 

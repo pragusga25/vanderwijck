@@ -1,15 +1,14 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
-import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
-import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
 import PurchasingStatusTable, {
   PurchasingStatusData,
 } from '@components/Purchasing/StatusTable';
+import { GetServerSideProps } from 'next';
+import prisma from '@lib/prisma';
+import {STATUS} from '../../../constants'
 
-export default function Page() {
+export default function Page({data}:{data:PurchasingStatusData[]}) {
   const router = useRouter();
   return (
     <Layout
@@ -30,32 +29,70 @@ export default function Page() {
             STATUS
           </h1>
         </div>
-        <PurchasingStatusTable data={DummyData} />
+        <PurchasingStatusTable data={data} />
       </div>
     </Layout>
   );
 }
 
-const DummyData: PurchasingStatusData[] = [
-  {
-    itemType: '1',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    status: 'sukses',
-    poNumber: 'po123',
-  },
-  {
-    itemType: '1',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    status: 'sukses',
-    poNumber: 'po123',
-  },
-  {
-    itemType: '1',
-    transactionNumber: '123',
-    itemName: 'kucing',
-    status: 'sukses',
-    poNumber: 'po123',
-  },
-];
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const priItemLogs = await prisma.priItemLog.findMany({
+    select: {
+      parentItemLog: {
+        select: {
+          transaction: {
+            select: {
+              status: true
+            }
+          },
+          item: {
+            select: {
+              name: true,
+              subcodeValue: true
+            }
+          }
+        },
+      },
+      quantity: true,
+      id: true
+    },
+  });
+
+  const data: PurchasingStatusData[] = priItemLogs.map((log) => ({
+    status: STATUS[`${log.parentItemLog.transaction.status}`]+'',
+    name: log.parentItemLog.item.name+'',
+    subcode: log.parentItemLog.item.subcodeValue+'',
+    qty: log.quantity,
+    id: log.id
+  }));
+
+  return {
+    props: {
+      data,
+    },
+  };
+
+// const DummyData: PurchasingStatusData[] = [
+//   {
+//     itemType: '1',
+//     transactionNumber: '123',
+//     itemName: 'kucing',
+//     status: 'sukses',
+//     poNumber: 'po123',
+//   },
+//   {
+//     itemType: '1',
+//     transactionNumber: '123',
+//     itemName: 'kucing',
+//     status: 'sukses',
+//     poNumber: 'po123',
+//   },
+//   {
+//     itemType: '1',
+//     transactionNumber: '123',
+//     itemName: 'kucing',
+//     status: 'sukses',
+//     poNumber: 'po123',
+//   },
+// ];
+}

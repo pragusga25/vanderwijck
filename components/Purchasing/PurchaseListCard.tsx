@@ -16,6 +16,7 @@ export interface PurchaseListCardCardProps {
   handleChecked: (idx: number, check: boolean) => void;
   handleDecline: (idx: number) => void;
   handleAccept: (idx: number) => void;
+  loading: boolean;
 }
 const PurchaseListCard: React.FC<PurchaseListCardCardProps> = ({
   data,
@@ -24,6 +25,7 @@ const PurchaseListCard: React.FC<PurchaseListCardCardProps> = ({
   index,
   isChecked,
   handleAccept,
+  loading = false,
 }) => {
   return (
     <div
@@ -51,17 +53,19 @@ const PurchaseListCard: React.FC<PurchaseListCardCardProps> = ({
           <div className="flex justify-between w-full">
             <h3>Remarks: {data.remarks}</h3>
             <div className="flex gap-x-4">
-              <div
+              <button
+                disabled={loading}
                 onClick={() => {
-                  isChecked && handleDecline(index);
+                  isChecked && handleAccept(index);
                 }}
                 className={`px-2.5 bg-blue-astronaut font-medium rounded text-white py-1 ${
                   !isChecked ? 'cursor-not-allowed' : 'cursor-pointer'
                 }`}
               >
                 Accept
-              </div>
-              <div
+              </button>
+              <button
+                disabled={loading}
                 onClick={() => {
                   !isChecked && handleDecline(index);
                 }}
@@ -70,7 +74,7 @@ const PurchaseListCard: React.FC<PurchaseListCardCardProps> = ({
                 }`}
               >
                 Decline
-              </div>
+              </button>
             </div>
           </div>
         </div>
