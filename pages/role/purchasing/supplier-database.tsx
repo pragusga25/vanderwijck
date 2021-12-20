@@ -11,14 +11,29 @@ import { useState } from 'react';
 import { ProjectItemCardProps } from '@components/Project/ProjectItemCard';
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
+import toast from 'react-hot-toast';
 
 let retrievedData: any;
 
-export default function Page() {
-  const [data, setData] = useState<ProjectItemCardProps>(null);
+export default function Page({
+  categories,
+  data: myData
+}: {
+  categories: LogisticsCategoryData,
+  data: any
+}) {
+  const [data, setData] = useState<any>(null);
   const router = useRouter();
   const dummyOnSearch = (data) => {
-    console.log(data);
+    const name = data.e.itemName as string;
+    const item = myData.find((d) => d.itemName === name);
+    if (item) {
+      let arrayItem = [item].flat()
+      setData(arrayItem);
+    } else {
+      setData(false)
+      toast.error('Item tidak ditemukan recordnya');
+    }
   };
   return (
     <Layout
@@ -45,7 +60,8 @@ export default function Page() {
             onSearch={dummyOnSearch}
           />
         </div>
-        <PurchasingSupplierTable data={data} />
+        {/* <PurchasingSupplierTable data={data} /> */}
+        {!!data && <PurchasingSupplierTable data={data} />}
         {/* <PurchasingSupplierTable data={retrievedData.length > 0 ? retrievedData : DummyData} /> */}
       </div>
     </Layout>
@@ -72,9 +88,6 @@ const DummyCategoryData: LogisticsCategoryData[] = [
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const items = await prisma.item.findMany({
-    where: {
-      name: 'Pipe Seamless 40A C.Steel Sch.40'
-    },
     select: {
       id: true,
       name: true,
@@ -91,7 +104,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
   });
 
-  const retrievedData: PurchasingSupplierData[] = items.map((log) => ({
+  const data: PurchasingSupplierData[] = items.map((log) => ({
     itemType: log.id,
     itemName: log.name+'',
     supplier: log.ItemsOnSuppliers[0].supplier.name+'',
@@ -100,7 +113,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   return {
     props: {
-      retrievedData,
+      data,
     },
   };
 }

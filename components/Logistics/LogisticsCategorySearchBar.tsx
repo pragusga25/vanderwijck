@@ -24,7 +24,7 @@ const LogisticsCategorySearchBar: React.FC<{
   }
   function onCategorySelected(fieldName: string, val: string) {
     setSelectedCategory(val);
-    setChoices(data.find((e) => e.categoryId == val)?.choices ?? []);
+    setChoices(data ? data.find((e) => e.categoryId == val)?.choices ?? [] : []);
     setValue(fieldName, val);
   }
   function onItemSelected(fieldName: string, val: string) {
@@ -34,12 +34,12 @@ const LogisticsCategorySearchBar: React.FC<{
     <form onSubmit={handleSubmit(onSearch)}>
       <div className="flex">
         <LogisticsSelectPlainField
-          choices={data.map((e) => {
+          choices={data ? data.map((e) => {
             return {
               text: e.categoryName,
               value: e.categoryId,
             };
-          })}
+          }) : []}
           withSelect
           fieldName="e.categoryId"
           selectClassName="bg-gray-100 ring-1 ring-black focus:outline-none"
