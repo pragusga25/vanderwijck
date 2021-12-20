@@ -1,3 +1,4 @@
+import { PrismaClient } from '@prisma/client';
 import {
   items,
   locations,
@@ -6,9 +7,11 @@ import {
   suppliers,
   projects,
 } from '../data';
-import prisma from '@lib/prisma';
+import prisma from '../lib/prisma';
 
-export const seed = async () => {
+// const prisma = new PrismaClient();
+
+const seed = async () => {
   await prisma.remark.createMany({ data: remarks });
   await prisma.subcode.createMany({ data: subcodes });
   await prisma.item.createMany({
@@ -32,4 +35,13 @@ export const seed = async () => {
   }
 };
 
-export default seed;
+seed()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
+
+// export default seed;
