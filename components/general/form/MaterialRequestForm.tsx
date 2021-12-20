@@ -53,9 +53,16 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
             );
           }
 
+          const itemName =
+            data
+              .find((d) => d.itemId === itemId)
+              ?.itemName?.toLocaleLowerCase() ?? '';
+
+          const unit = itemName?.startsWith('pipe') ? 'm' : 'pcs';
+
           dataPost.push({
             quantity: Number(quantity as string),
-            unit: 'pcs',
+            unit,
             status: Status.MATERIAL_REQUEST_SENT,
             itemId: Number(itemId as string),
             remarkId: Number(remarkId),

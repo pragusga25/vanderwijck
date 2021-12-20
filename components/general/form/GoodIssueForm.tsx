@@ -29,7 +29,8 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
 
   const addMaterialField = () => addMaterials(materials.concat([''])); // ini cm buat nambahin field material doang
 
-  async function handleBook() {
+  async function handleBook(e) {
+    e.preventDefault();
     try {
       await postData();
     } catch (err) {
@@ -37,7 +38,8 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
     }
   }
 
-  async function handleSend() {
+  async function handleSend(e) {
+    e.preventDefault();
     try {
       await postData(true);
     } catch (err) {
@@ -48,7 +50,8 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
   const postData = async (isSend = false) => {
     const vals = getValues('e');
     const dataPost = [];
-
+    console.log(data, 'data');
+    console.log(vals, 'CALSSSS');
     if (!vals.requestedBy) {
       return toast.error('Silkan lengkapi form terlebih dahulu');
     }
@@ -71,9 +74,16 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
           );
         }
 
+        const itemName =
+          data
+            .find((d) => d.itemId === itemId)
+            ?.itemName?.toLocaleLowerCase() ?? '';
+
+        const unit = itemName?.startsWith('pipe') ? 'm' : 'pcs';
+
         dataPost.push({
           quantity: Number(quantity as string),
-          unit: 'pcs',
+          unit,
           status: isSend ? Status.ISSUE_REQUEST_SENT : Status.BOOK_REQUEST,
           itemId: Number(itemId as string),
           remarkId: Number(remarkId),

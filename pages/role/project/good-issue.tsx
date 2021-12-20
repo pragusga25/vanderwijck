@@ -51,7 +51,7 @@ export default function Page({
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const items = await prisma.item.findMany();
   const remarks = await prisma.remark.findMany();
 
