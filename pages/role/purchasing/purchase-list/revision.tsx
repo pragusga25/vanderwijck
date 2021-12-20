@@ -1,27 +1,20 @@
 import Layout from '@components/Layout';
 import { useRouter } from 'next/router';
 import { BackButton } from '@components/general/button';
-import PurchasingSupplierTable, {
-  PurchasingSupplierData,
-} from '@components/Purchasing/SupplierTable';
-import LogisticsCategorySearchBar, {
-  LogisticsCategoryData,
-} from '@components/Logistics/LogisticsCategorySearchBar';
 import { useState } from 'react';
-import { ProjectItemCardProps } from '@components/Project/ProjectItemCard';
 import PurchaseListRevisionTable from '@components/Purchasing/table/PurchasingRevisionTable';
-import {
-  PurchasingRevisionChoices,
-  DummyPurchaseItemLogRevision,
-  DummySupplierData,
-  PurchaseItemLogRevision,
-} from '@components/Purchasing/table/PurchasingTypes';
+import { PurchaseItemLogRevision } from '@components/Purchasing/table/PurchasingTypes';
 import SupplierSearchBar from '@components/Purchasing/PurchasingSearchBar';
-export default function Page() {
+import { GetServerSideProps } from 'next';
+import prisma from '@lib/prisma';
+import { Incoterms } from '@prisma/client';
+
+export default function Page({ myChoices, mySupplierData, myPrItemLogs }) {
   const router = useRouter();
-  const supplierData = DummySupplierData
-  const [data, setData] = useState<PurchaseItemLogRevision[]>(DummyPurchaseItemLogRevision);
-  const [shownData, setShownData] = useState<PurchaseItemLogRevision[]>(DummyPurchaseItemLogRevision);
+  const supplierData = mySupplierData;
+  const [data, setData] = useState<PurchaseItemLogRevision[]>(myPrItemLogs);
+  const [shownData, setShownData] =
+    useState<PurchaseItemLogRevision[]>(myPrItemLogs);
 
   const [checkedIndex, setCheckedIndex] = useState<boolean[]>(
     Array(data.length).fill(false)
@@ -29,14 +22,21 @@ export default function Page() {
 
   function loadPurchaseRequest(supplierName: string, itemName: string) {
     setCheckedIndex(Array(data.length).fill(false));
-    setShownData(data.filter(v=>v.itemName.includes(itemName) 
-        && supplierData.findIndex(w=>w.supplierName == supplierName 
-            && w.itemNames.includes(v.itemName)) >= 0 ))    
+    setShownData(
+      data.filter(
+        (v) =>
+          v.itemName.includes(itemName) &&
+          supplierData.findIndex(
+            (w) =>
+              w.supplierName == supplierName && w.itemNames.includes(v.itemName)
+          ) >= 0
+      )
+    );
   }
-  
+
   const filterBySupplier = (data) => {
     console.log(data);
-    loadPurchaseRequest(data.e.categoryId || '', data.e.itemName || '')
+    loadPurchaseRequest(data.e.categoryId || '', data.e.itemName || '');
   };
   function handleChecked(idx: number, check: boolean) {
     const res = [...checkedIndex];
@@ -65,7 +65,7 @@ export default function Page() {
         </div>
         <div className="mb-4 md:mb-12">
           <SupplierSearchBar
-            data={DummySupplierData}
+            data={mySupplierData}
             onSearch={filterBySupplier}
             placeholder="Supplier"
           />
@@ -75,7 +75,7 @@ export default function Page() {
             data={shownData}
             handleChecked={handleChecked}
             checkedIndex={checkedIndex}
-            choices={DummyPRChoices}
+            choices={myChoices}
           />
         </div>
       </div>
@@ -83,7 +83,78 @@ export default function Page() {
   );
 }
 
-const DummyPRChoices: PurchasingRevisionChoices = {
-  PilihanDeliveryTerm: ['Term 1', 'Term 2', 'Term 3'],
-  PilihanTujuan: ['Warehouse A', 'Warehouse B', 'Warehouse C'],
+export const getServerSideProps: GetServerSideProps = async () => {
+  const incoterms = [Incoterms.CIF, Incoterms.DEP, Incoterms.FCA];
+  const locs = await prisma.location.findMany({
+    select: {
+      name: true,
+      id: true,
+    },
+  });
+  const destinations = locs.map((loc) => loc.name);
+  const myChoices = {
+    PilihanDeliveryTerm: incoterms,
+    PilihanTujuan: destinations,
+  };
+
+  const supplierData = await prisma.supplier.findMany({
+    select: {
+      name: true,
+      id: true,
+      ItemsOnSuppliers: {
+        select: {
+          item: true,
+        },
+      },
+    },
+  });
+
+  const mySupplierData = supplierData.map((supplier) => ({
+    supplierName: supplier.name,
+    itemNames: supplier.ItemsOnSuppliers.map((item) => item.item.name),
+  }));
+
+  const prItemLogs = await prisma.priItemLog.findMany({
+    select: {
+      id: true,
+      parentItemLog: {
+        select: {
+          quantity: true,
+          unit: true,
+          id: true,
+          item: {
+            select: {
+              category: true,
+              name: true,
+            },
+          },
+        },
+      },
+      quantity: true,
+      unit: true,
+    },
+  });
+
+  const myPrItemLogs = prItemLogs.map((pr) => ({
+    projectNumber: '1367',
+    category: pr.parentItemLog.item.category,
+    itemName: pr.parentItemLog.item.name,
+    qty: pr.quantity + '',
+    unit: pr.unit,
+    prItemLogId: pr.id,
+    itemLogId: pr.parentItemLog.id,
+  }));
+
+  return {
+    props: {
+      myChoices,
+      mySupplierData,
+      myPrItemLogs,
+    },
+  };
 };
+
+// const DummyPRChoices: PurchasingRevisionChoices = {
+//   PilihanDeliveryTerm: ['Term 1', 'Term 2', 'Term 3'],
+//   PilihanTujuan: ['Warehouse A', 'Warehouse B', 'Warehouse C'],
+// };

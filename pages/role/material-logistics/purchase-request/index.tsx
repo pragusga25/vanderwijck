@@ -38,7 +38,7 @@ export default function Page({
     const dataPost = filteredData.map((d) => ({
       itemLogId: d.itemLogId,
       quantity: Number(d.qty),
-      unit: d.remarks,
+      unit: d.unit,
     }));
 
     setLoading(true);

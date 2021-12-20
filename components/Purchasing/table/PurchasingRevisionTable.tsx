@@ -16,6 +16,10 @@ import {
   PurchaseItemLogRevision,
   SupplierData,
 } from './PurchasingTypes';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { Incoterms } from '@prisma/client';
 
 const PurchaseListRevisionTable: React.FC<{
   choices: PurchasingRevisionChoices;
@@ -24,26 +28,65 @@ const PurchaseListRevisionTable: React.FC<{
   checkedIndex: boolean[];
 }> = ({ data, handleChecked, checkedIndex, choices }) => {
   const { register, getValues, setValue } = useForm();
-  function handlePost() {
+  const router = useRouter();
+  const [loading, setLoading] = React.useState(false);
+  const strToDate = (str: string) => {
+    const spliited = str.split('-');
+    return new Date(
+      Number(spliited[0]),
+      Number(spliited[1]) - 1,
+      Number(spliited[2])
+    );
+  };
+
+  async function handlePost() {
     const allResult = getValues('e');
     const checkedResult: any[] = [];
     checkedIndex.forEach((bol, idx) => {
       if (bol) checkedResult.push(allResult[idx]);
     });
-    console.log(checkedResult);
+
+    let isValid = true;
+
+    checkedResult.forEach((d) => {
+      if (!d.eta || !d.sentTo || !d.deliveryTerm) isValid = false;
+    });
+
+    if (!isValid) return toast.error('Please fill all fields');
+    const dataPost = checkedResult.map((d) => ({
+      prItemLogId: d.prItemLogId as number,
+      itemLogId: d.itemLogId as number,
+      date: strToDate(d.eta),
+      delTerm: d.deliveryTerm as Incoterms,
+      sentTo: d.sentTo as string,
+      quantity: Number(d.qty),
+    }));
+
+    setLoading(true);
+
+    await toast
+      .promise(axios.post('/api/pr/revision', { datas: dataPost }), {
+        loading: 'Memproses data...',
+        success: 'Berhasil memproses data',
+        error: 'Gagal memproses data',
+      })
+      .then(() => router.reload())
+      .catch(() => toast.error('Gagal memproses data'))
+      .finally(() => setLoading(false));
   }
   return (
     <div
       style={{ minWidth: '1000px' }}
       className="w-full px-1 overflow-x-auto relative"
     >
-      <div
+      <button
+        disabled={loading}
         style={{ width: 'max-content' }}
         onClick={handlePost}
         className="bg-blue-astronaut cursor-pointer text-white font-medium py-2 px-9 rounded right-0 top-0 absolute"
       >
         Post
-      </div>
+      </button>
       <table className="w-full mt-16">
         <thead className="text-sm">
           <tr>
@@ -93,6 +136,8 @@ const Row: React.FC<{
     setValue(`e.${idx}.itemName`, e.itemName);
     setValue(`e.${idx}.qty`, e.qty);
     setValue(`e.${idx}.unit`, e.unit);
+    setValue(`e.${idx}.prItemLogId`, e.prItemLogId);
+    setValue(`e.${idx}.itemLogId`, e.itemLogId);
   }, []);
   function extractChoices(data: string[]): SelectObject[] {
     return data.map((e) => {
