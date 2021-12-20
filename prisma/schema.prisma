@@ -3,11 +3,13 @@
 
 generator client {
   provider = "prisma-client-js"
+
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+
 }
 
 model Item {
@@ -16,7 +18,7 @@ model Item {
   name     String
   quantity Int
   avl      Int
-  booked   Int
+  booked   Int      @default(0)
   category Category
 
   ItemsOnSuppliers ItemsOnSuppliers[]
@@ -80,10 +82,10 @@ model ItemsOnSuppliers {
 }
 
 model Supplier {
-  id       Int      @id @default(autoincrement())
+  id       Int        @id @default(autoincrement())
   name     String
   country  String
-  category Category
+  category Category[]
 
   ItemsOnSuppliers ItemsOnSuppliers[]
   PurchaseOrder    PurchaseOrder[]
