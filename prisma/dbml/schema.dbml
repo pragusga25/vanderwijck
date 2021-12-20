@@ -1,0 +1,159 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Item {
+  id Int [pk, increment]
+  code String [unique, not null]
+  name String [not null]
+  quantity Int [not null]
+  avl Int [not null]
+  booked Int [not null]
+  category Category [not null]
+  ItemsOnSuppliers ItemsOnSuppliers [not null]
+  Subcode Subcode [not null]
+  subcodeValue String [not null]
+  ItemLog ItemLog [not null]
+}
+
+Table ItemLog {
+  id Int [pk, increment]
+  itemId Int [not null]
+  item Item [not null]
+  status Status [not null]
+  unit String [not null]
+  quantity Int [not null]
+  rejectedReason String
+  date DateTime [default: `now()`, not null]
+  remarkId Int [not null]
+  remark Remark [not null]
+  locationId Int
+  location Location
+  transactionId Int [not null]
+  transaction Transaction [not null]
+  PriItemLog PriItemLog [not null]
+}
+
+Table Transaction {
+  id Int [pk, increment]
+  requestedBy String [not null]
+  approvedBy String
+  status Status [not null]
+  ItemLog ItemLog [not null]
+  projectId Int [not null]
+  project Project [not null]
+}
+
+Table PriItemLog {
+  id Int [pk, increment]
+  status Status [not null]
+  unit String [not null]
+  quantity Int [not null]
+  date DateTime [default: `now()`, not null]
+  incoterm Incoterms [not null]
+  purchaseRequestId Int [not null]
+  purchaseRequest PurchaseRequest [not null]
+  parentItemLogId Int [not null]
+  parentItemLog ItemLog [not null]
+}
+
+Table ItemsOnSuppliers {
+  id Int [pk, increment]
+  itemId Int [not null]
+  supplierId Int [not null]
+  item Item [not null]
+  supplier Supplier [not null]
+}
+
+Table Supplier {
+  id Int [pk, increment]
+  name String [not null]
+  country String [not null]
+  category Category [not null]
+  ItemsOnSuppliers ItemsOnSuppliers [not null]
+  PurchaseOrder PurchaseOrder [not null]
+}
+
+Table Project {
+  id Int [pk, increment]
+  name String [not null]
+  Transaction Transaction [not null]
+}
+
+Table Location {
+  id Int [pk, increment]
+  name String [not null]
+  ItemLog ItemLog [not null]
+}
+
+Table Remark {
+  id Int [pk, increment]
+  name String [not null]
+  ItemLog ItemLog [not null]
+}
+
+Table Subcode {
+  value String [pk]
+  items Item [not null]
+}
+
+Table PurchaseRequest {
+  id Int [pk, increment]
+  PriItemLog PriItemLog [not null]
+}
+
+Table PurchaseOrder {
+  id Int [pk, increment]
+  supplierId Int [not null]
+  supplier Supplier [not null]
+}
+
+Enum Category {
+  PIPE
+  FITTING
+  VALVES
+}
+
+Enum Status {
+  ISSUE_REQUEST_SENT
+  MATERIAL_REQUEST_SENT
+  PURCHASE_REQUEST_SENT
+  CHECKOUT
+  CREATING_PURCHASE_ORDER
+  PURCHASE_ORDER_SENT
+  DELIVERY
+  DELIVERED
+  ISSUE_GOOD_SENT
+  CANCELLED
+  SELECTED_FOR_CHECKOUT
+  BOOK_REQUEST
+  DECLINED
+}
+
+Enum Incoterms {
+  FCA
+  CIF
+  DEP
+}
+
+Ref: Item.subcodeValue > Subcode.value
+
+Ref: ItemLog.itemId > Item.id
+
+Ref: ItemLog.remarkId > Remark.id
+
+Ref: ItemLog.locationId > Location.id
+
+Ref: ItemLog.transactionId > Transaction.id
+
+Ref: Transaction.projectId > Project.id
+
+Ref: PriItemLog.purchaseRequestId > PurchaseRequest.id
+
+Ref: PriItemLog.parentItemLogId > ItemLog.id
+
+Ref: ItemsOnSuppliers.itemId > Item.id
+
+Ref: ItemsOnSuppliers.supplierId > Supplier.id
+
+Ref: PurchaseOrder.supplierId > Supplier.id

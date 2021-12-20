@@ -1,11 +1,14 @@
-import Layout from '@components/Layout';
-import { useRouter } from 'next/router';
 import { BackButton } from '@components/general/button';
-import { useEffect, useState } from 'react';
+import Layout from '@components/Layout';
 import PurchaseListCard, {
-  PurchaseListCardData,
+  PurchaseListCardData
 } from '@components/Purchasing/PurchaseListCard';
+import prisma from '@lib/prisma';
+import { GetServerSideProps } from 'next';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { STATUS } from '../../../../constants';
 
 export default function Page() {
   const router = useRouter();
@@ -89,6 +92,65 @@ export default function Page() {
   );
 }
 
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const priItemLogs = await prisma.priItemLog.findMany({
+    select: {
+      parentItemLog: {
+        select: {
+          quantity: true,
+          transaction: {
+            select: {
+              project: {
+                select: {
+                  name: true
+                }
+              },
+              approvedBy: true
+            }
+            },
+          item: {
+            select: {
+              name: true,
+              avl: true,
+              ItemsOnSuppliers: {
+                select: {
+                  supplier: {
+                    select: {
+                      name: true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          remark: {
+            select: {
+              name: true
+            }
+          }
+        },
+      },
+    },
+  });
+
+  const data: PurchaseListCardData[] = priItemLogs.map((log) => ({
+    projectNo: log.parentItemLog.quantity,
+    approvedBy: log.parentItemLog.transaction.project.name,
+    itemName: log.parentItemLog.transaction.approvedBy,
+    qty: log.parentItemLog.item.name,
+    avl: log.parentItemLog.item.avl,
+    remarks: log.parentItemLog.item.ItemsOnSuppliers.supplier.name,
+    suppliers: log.parentItemLog.remark.name,
+  }));
+
+  return {
+    props: {
+      data,
+    },
+  };
+}
+
+
 const DummyMaterialCheckout: PurchaseListCardData[] = [
   {
     projectNo: 'Project 1367',
@@ -97,7 +159,7 @@ const DummyMaterialCheckout: PurchaseListCardData[] = [
     qty: '8',
     avl: '8',
     remarks: 'For Ballast System Reparation',
-    suppliers: ['google', 'shopee'],
+    suppliers: ['google'],
   },
   {
     projectNo: 'Project 1111',
