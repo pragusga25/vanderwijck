@@ -1,10 +1,10 @@
 import React from 'react';
 export interface PurchasingStatusData {
-  itemType: string;
-  transactionNumber: string;
-  itemName: string;
-  status: string;
-  poNumber: string;
+  status: string,
+  name: string,
+  subcode: string,
+  qty: number,
+  id: any
 }
 const PurchasingStatusTable: React.FC<{ data: PurchasingStatusData[] }> = ({
   data,
@@ -17,22 +17,20 @@ const PurchasingStatusTable: React.FC<{ data: PurchasingStatusData[] }> = ({
       <table className="w-full">
         <thead className="text-sm">
           <tr>
-            <th className="w-[10%]">Item Type</th>
-            <th className="w-1/5">Transaction Number</th>
+            <th className="w-1/5">Transaction Status</th>
             <th className="w-[30%]">Item Name</th>
-            <th className="w-1/5">Status</th>
-            <th className="w-1/5">PO Number</th>
+            <th className="w-1/5">Subcode</th>
+            <th className="w-1/5">Quantity</th>
           </tr>
         </thead>
         <tbody>
           {data.map((e) => {
             return (
-              <tr key={e.itemType + e.transactionNumber}>
-                <td className="border-black border">{e.itemType}</td>
-                <td className="border-black border">{e.transactionNumber}</td>
-                <td className="border-black border">{e.itemName}</td>
+              <tr key={e.id}>
                 <td className="border-black border">{e.status}</td>
-                <td className="border-black border">{e.poNumber}</td>
+                <td className="border-black border">{e.name}</td>
+                <td className="border-black border">{e.subcode}</td>
+                <td className="border-black border">{e.qty}</td>
               </tr>
             );
           })}
