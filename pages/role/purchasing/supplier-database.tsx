@@ -12,6 +12,7 @@ import { ProjectItemCardProps } from '@components/Project/ProjectItemCard';
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
 import toast from 'react-hot-toast';
+import uniqid from 'uniqid';
 
 let retrievedData: any;
 
@@ -25,16 +26,9 @@ export default function Page({
   const [data, setData] = useState<any>(null);
   const router = useRouter();
   const dummyOnSearch = (data) => {
-    // Somehow the `data` here is just 1 object, even tho I don't use [0] anymore when processing data:
-  //   {
-  //     "e": {
-  //         "categoryId": "1",
-  //         "itemName": "Pipe Seamless 40A C.Steel Sch.40"
-  //     }
-  // }
     const name = data.e.itemName as string;
-    const item = myData.find((d) => d.itemName === name);
-    if (item) {
+    const item = myData.filter((d) => d.itemName === name);
+    if (item.length > 0) {
       let arrayItem = [item].flat()
       setData(arrayItem);
     } else {
@@ -94,29 +88,46 @@ const DummyCategoryData: LogisticsCategoryData[] = [
 ];
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const items = await prisma.itemsOnSuppliers.findMany({
+  const items = await prisma.priItemLog.findMany({
     select: {
-      supplier: {
-        select: {
-          name: true,
-          country: true
-        }
-      },
-      item: {
-        select: {
-          id: true,
-          name: true
+      id: true,
+      parentItemLog:{
+        select:{
+          item:{
+            select:{
+              id: true,
+              name: true,
+              ItemsOnSuppliers:{
+                select:{
+                  supplier: true
+                }
+              }
+            }
+          }
         }
       }
     },
   });
 
-  const data: PurchasingSupplierData[] = items.map((log) => ({
-    itemType: log.item.id,
-    itemName: log.item.name+'',
-    supplier: log.supplier.name+'',
-    location: log.supplier.country+''
-  }));
+  let newArr = []
+  items.forEach((e1, i1) => {
+    e1.parentItemLog.item.ItemsOnSuppliers.forEach((e2,i2) => {
+      newArr.push({
+        uniqid: uniqid(),
+        itemType: items[i1].parentItemLog.item.id,
+        itemName: items[i1].parentItemLog.item.name,
+        supplier: items[i1].parentItemLog.item.ItemsOnSuppliers[i2].supplier.name,
+        location: items[i1].parentItemLog.item.ItemsOnSuppliers[i2].supplier.country,
+      })
+    })
+  })
+  
+  // [0].parentItemLog.item.ItemsOnSuppliers[0].supplier.country
+  // [0].parentItemLog.item.ItemsOnSuppliers[0].supplier.name
+  // [0].parentItemLog.item.name
+  // [0].parentItemLog.item.id
+
+  const data: PurchasingSupplierData[] = newArr;
 
   return {
     props: {
@@ -124,24 +135,3 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
   };
 }
-
-const DummyData: PurchasingSupplierData[] = [
-  {
-    itemType: 1,
-    itemName: 'kucing',
-    supplier: 'google',
-    location: 'jakarta',
-  },
-  {
-    itemType: 2,
-    itemName: 'kucing',
-    supplier: 'google',
-    location: 'jakarta',
-  },
-  {
-    itemType: 3,
-    itemName: 'kucing',
-    supplier: 'google',
-    location: 'jakarta',
-  },
-];

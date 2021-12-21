@@ -22,7 +22,8 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.22.2",
-    "react-hot-toast": "^2.1.1"
+    "react-hot-toast": "^2.1.1",
+    "uniqid": "^5.4.0"
   },
   "devDependencies": {
     "@types/lodash.uniq": "^4.5.6",
