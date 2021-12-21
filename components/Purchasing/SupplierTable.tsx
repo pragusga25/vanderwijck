@@ -1,9 +1,10 @@
 import React from 'react';
 export interface PurchasingSupplierData {
+  uniqid: string;
   itemType: number;
   itemName: string;
-  supplier: string;
-  location: string;
+  supplier: any;
+  location: any;
 }
 const PurchasingSupplierTable: React.FC<{ data: PurchasingSupplierData[] }> = ({
   data,
@@ -26,7 +27,7 @@ const PurchasingSupplierTable: React.FC<{ data: PurchasingSupplierData[] }> = ({
         <tbody>
           {data.map((e) => {
             return (
-              <tr key={e.itemType}>
+              <tr key={e.uniqid}>
                 <td className="border-black border">{e.itemType}</td>
                 <td className="border-black border">{e.itemName}</td>
                 <td className="border-black border">{e.supplier}</td>
