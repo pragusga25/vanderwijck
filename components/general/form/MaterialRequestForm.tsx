@@ -31,7 +31,7 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
       const vals = getValues('e');
       const dataPost = [];
 
-      if (!vals.requestedBy) {
+      if (!vals.requestedBy || !vals.approvedBy) {
         return toast.error('Silkan lengkapi form terlebih dahulu');
       }
 
@@ -41,11 +41,11 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
           const quantity = vals[val]['qty'];
           const remarkId = vals[val]['remark'];
 
-          const avl = data.find((item) => item.itemId === itemId).avl;
-
           if (!itemId || !quantity || !remarkId) {
             return toast.error('Silkan lengkapi form terlebih dahulu');
           }
+
+          const avl = data.find((item) => item.itemId === itemId).avl;
 
           if (Number(quantity) > avl) {
             return toast.error(
@@ -78,6 +78,7 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
           axios.post(URL, {
             dataPost,
             requestedBy: vals.requestedBy as string,
+            approvedBy: vals.approvedBy as string,
           }),
           {
             success: 'Data berhasil dibuat',
@@ -104,6 +105,12 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
               register={register}
               fieldLabel="Requested By:"
               fieldName="e.requestedBy"
+              className="md:w-52  lg:w-64 text-lg"
+            />
+            <TextField
+              register={register}
+              fieldLabel="Approved By:"
+              fieldName="e.approvedBy"
               className="md:w-52  lg:w-64 text-lg"
             />
           </div>

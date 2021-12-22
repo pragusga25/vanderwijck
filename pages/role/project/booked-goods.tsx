@@ -82,7 +82,7 @@ export default function Page({
           <BackButton
             message=""
             customClassName="font-bold px-4 py-3 text-black"
-            onClick={() => router.push('/role/project')}
+            onClick={() => router.push('/role/project/good-issue')}
           />
           <h1 className="ml-4 text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold">
             Booked Goods List

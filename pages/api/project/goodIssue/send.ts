@@ -12,6 +12,7 @@ const handler: NextApiHandler = async (req, res) => {
         data: {
           status: Status.ISSUE_REQUEST_SENT,
           requestedBy: body.requestedBy,
+          approvedBy: body.approvedBy,
           projectId: 1367,
         },
       });

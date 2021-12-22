@@ -125,6 +125,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       quantity: true,
       parentItemLog: {
         select: {
+          transaction: true,
           remark: true,
           item: {
             select: {
@@ -142,10 +143,12 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
   });
 
+  console.log(prItemLogs);
+
   const data = prItemLogs.map((log) => ({
     id: log.id,
     projectNo: 'Project 1367',
-    approvedBy: 'Iqbal Baihaqi',
+    approvedBy: log.parentItemLog.transaction.approvedBy || 'Iqbal Baihaqi',
     itemName: log.parentItemLog.item.name,
     qty: log.quantity + '',
     avl: log.parentItemLog.item.avl + '',
