@@ -21,7 +21,7 @@ const StatusTable: React.FC<{ data: ProjectStatusData[] }> = ({ data }) => {
             <th className="w-1/12">Subcode</th>
             <th className="w-1/12">Qty</th>
             <th className="w-1/12">Unit</th>
-            <th className="w-2/12">Hola By</th>
+            <th className="w-2/12">Approved By</th>
             <th className="w-1/12">Status</th>
           </tr>
         </thead>
