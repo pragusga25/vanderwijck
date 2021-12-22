@@ -47,7 +47,7 @@ const ItemCard: React.FC<ProjectItemCardProps> = ({
             <thead>
                 <tr>
                     <th className="border-black border w-1/5">Date</th>
-                    <th className="border-black border w-2/5">Project Number</th>
+                    <th className="border-black border w-1/5">Project Number</th>
                     <th className="border-black border w-1/6">Qty</th>
                     <th className="border-black border w-1/6">Status</th>
                 </tr>
