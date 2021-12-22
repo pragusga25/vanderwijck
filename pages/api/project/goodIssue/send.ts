@@ -6,12 +6,12 @@ const handler: NextApiHandler = async (req, res) => {
   if (req.method === 'POST') {
     const { body } = req;
 
-    console.log(body, 'BODYYY');
     try {
       const transaction = await prisma.transaction.create({
         data: {
           status: Status.ISSUE_REQUEST_SENT,
           requestedBy: body.requestedBy,
+          approvedBy: body.approvedBy,
           projectId: 1367,
         },
       });
@@ -26,6 +26,23 @@ const handler: NextApiHandler = async (req, res) => {
 
       await prisma.itemLog.createMany({
         data: dataFix,
+      });
+
+      Promise.all(
+        dataFix.map((d) =>
+          prisma.item.update({
+            where: {
+              id: d.itemId,
+            },
+            data: {
+              avl: {
+                decrement: d.quantity,
+              },
+            },
+          })
+        )
+      ).then(() => {
+        console.log('Successfully');
       });
 
       res.status(200).json({

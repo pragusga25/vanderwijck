@@ -6,13 +6,13 @@ const handler: NextApiHandler = async (req, res) => {
   if (req.method === 'POST') {
     const { body } = req;
 
-    console.log(body, 'BODYYY');
     try {
       const transaction = await prisma.transaction.create({
         data: {
           status: Status.BOOK_REQUEST,
           requestedBy: body.requestedBy,
           projectId: 1367,
+          approvedBy: body.approvedBy,
         },
       });
 
@@ -37,6 +37,9 @@ const handler: NextApiHandler = async (req, res) => {
             data: {
               booked: {
                 increment: d.quantity,
+              },
+              avl: {
+                decrement: d.quantity,
               },
             },
           })

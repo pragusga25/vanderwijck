@@ -11,6 +11,7 @@ import { Remark } from '@prisma/client';
 import { Status } from '@prisma/client';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/router';
 
 export interface ItemProps {
   itemName: string;
@@ -26,8 +27,14 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
   const { register, getValues, setValue } = useForm();
   const [materials, addMaterials] = useState<any[]>(['']);
   const [isLoading, setLoading] = useState(false);
+  const router = useRouter();
 
   const addMaterialField = () => addMaterials(materials.concat([''])); // ini cm buat nambahin field material doang
+
+  const avls = {};
+  data.forEach((d) => {
+    avls[d.itemId] = d.avl;
+  });
 
   async function handleBook(e) {
     e.preventDefault();
@@ -50,9 +57,8 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
   const postData = async (isSend = false) => {
     const vals = getValues('e');
     const dataPost = [];
-    console.log(data, 'data');
-    console.log(vals, 'CALSSSS');
-    if (!vals.requestedBy) {
+
+    if (!vals.requestedBy || !vals.approvedBy) {
       return toast.error('Silkan lengkapi form terlebih dahulu');
     }
 
@@ -62,7 +68,8 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
         const quantity = vals[val]['qty'];
         const remarkId = vals[val]['remark'];
 
-        const avl = data.find((item) => item.itemId === itemId).avl;
+        const avlObj = data.find((item) => item.itemId === itemId);
+        const avl = avlObj.avl;
 
         if (!itemId || !quantity || !remarkId) {
           return toast.error('Silkan lengkapi form terlebih dahulu');
@@ -71,6 +78,13 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
         if (Number(quantity) > avl) {
           return toast.error(
             'Quantity tidak boleh melebihi jumlah barang yang tersedia'
+          );
+        }
+
+        avls[Number(itemId)] -= Number(quantity);
+        if (avls[Number(itemId)] < 0) {
+          return toast.error(
+            'Terdapat item yang tidak memiliki stok yang cukup'
           );
         }
 
@@ -102,6 +116,7 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
         axios.post(URL, {
           dataPost,
           requestedBy: vals.requestedBy as string,
+          approvedBy: vals.approvedBy as string,
         }),
         {
           success: 'Data berhasil dibuat',
@@ -109,6 +124,7 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
           loading: 'Membuat data...',
         }
       )
+      .then(() => router.replace(router.asPath))
       .finally(() => setLoading(false));
   };
 
@@ -128,6 +144,12 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
             register={register}
             fieldLabel="Requested By:"
             fieldName="e.requestedBy"
+            className="md:w-52  lg:w-64 text-lg"
+          />
+          <TextField
+            register={register}
+            fieldLabel="Approved By:"
+            fieldName="e.approvedBy"
             className="md:w-52  lg:w-64 text-lg"
           />
         </div>
