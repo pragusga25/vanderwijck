@@ -31,6 +31,11 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
 
   const addMaterialField = () => addMaterials(materials.concat([''])); // ini cm buat nambahin field material doang
 
+  const avls = {};
+  data.forEach((d) => {
+    avls[d.itemId] = d.avl;
+  });
+
   async function handleBook(e) {
     e.preventDefault();
     try {
@@ -56,11 +61,6 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
     if (!vals.requestedBy || !vals.approvedBy) {
       return toast.error('Silkan lengkapi form terlebih dahulu');
     }
-
-    const avls = {};
-    data.forEach((d) => {
-      avls[d.itemId] = d.avl;
-    });
 
     for (const val in vals) {
       if (val.startsWith('material-')) {
