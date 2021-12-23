@@ -69,7 +69,7 @@ export default function Page({
               Book Database
             </div>
           </Link>
-          <Link href="/role/project/database-availability">
+          <Link href="/role/material-logistics/database-availability">
             <div className="py-1.5 px-4 bg-astronaut hover:bg-blue-astronaut duration-300 ease-in-out cursor-pointer rounded text-white text-sm font-semibold">
               Database Avail.
             </div>
