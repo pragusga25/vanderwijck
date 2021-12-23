@@ -41,6 +41,10 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
           const quantity = vals[val]['qty'];
           const remarkId = vals[val]['remark'];
 
+          if(!itemId){
+            continue;
+          }
+
           if (!itemId || !quantity || !remarkId) {
             return toast.error('Silkan lengkapi form terlebih dahulu');
           }
@@ -69,7 +73,11 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
           });
         }
       }
-
+      if (dataPost.length == 0) {
+        return toast.error(
+          'Belum ada item yang dimasukan'
+        );
+      }
       const URL = '/api/project/materialRequest';
 
       setLoading(true);
