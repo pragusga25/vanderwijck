@@ -8,6 +8,7 @@ export interface LogisticsPurchaseRequestData {
   remarks: string;
   itemLogId: number;
   unit: string;
+  date?: string;
 }
 
 const LogisticsPurchaseRequest: React.FC<{
@@ -23,19 +24,22 @@ const LogisticsPurchaseRequest: React.FC<{
       <table className="w-full">
         <thead className="">
           <tr>
-            <th className="pb-4" style={{ width: '12%' }}>
+            <th className="pb-4" style={{ width: '15%' }}>
+              Date
+            </th>
+            <th className="pb-4" style={{ width: '10%' }}>
               Project No
             </th>
-            <th className="pb-4" style={{ width: '12%' }}>
+            <th className="pb-4" style={{ width: '8%' }}>
               Item Code
             </th>
-            <th className="pb-4" style={{ width: '30%' }}>
+            <th className="pb-4" style={{ width: '25%' }}>
               Item Name
             </th>
             <th className="pb-4" style={{ width: '8%' }}>
               Qty
             </th>
-            <th className="pb-4" style={{ width: '24%' }}>
+            <th className="pb-4" style={{ width: '20%' }}>
               Remarks
             </th>
             <th className="pb-4" style={{ width: '10%' }}></th>
@@ -45,6 +49,7 @@ const LogisticsPurchaseRequest: React.FC<{
           {data.map((e, idx) => {
             return (
               <tr key={`row-${idx}`}>
+                <td className="border-black border">{e.date ?? ''}</td>
                 <td className="border-black border">{e.projectNo}</td>
                 <td className="border-black border">{e.itemCode}</td>
                 <td className="border-black border">{e.itemName}</td>

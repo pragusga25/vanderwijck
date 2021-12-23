@@ -20,6 +20,7 @@ export interface PurchaseItemLogRevision {
   sentTo?: string;
   prItemLogId?: number;
   itemLogId?: number;
+  date?: string;
 }
 
 export interface PurchasingRevisionChoices {

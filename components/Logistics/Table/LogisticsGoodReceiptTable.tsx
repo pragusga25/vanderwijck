@@ -12,6 +12,7 @@ export interface LogisticsGoodReceiptData {
   itemId: number;
   prItemLogId: number;
   itemLogId: number;
+  date?: string;
 }
 
 const LogisticsGoodReceiptTable: React.FC<{
@@ -27,14 +28,17 @@ const LogisticsGoodReceiptTable: React.FC<{
             <th style={{ width: '5%' }} className="pb-6">
               No
             </th>
+            <th style={{ width: '10%' }} className="pb-6">
+              Date
+            </th>
             <th style={{ width: '23.3%' }} className="pb-6">
               Item Name
             </th>
             <th className="w-1/12 pb-6">Qty</th>
             <th className="w-1/12 pb-6">Unit</th>
             <th className="w-2/12 pb-6">Warehouse</th>
-            <th className="w-2/12 pb-6">Project Number</th>
-            <th className="w-2/12 pb-6">Trans. Code</th>
+            <th style={{ width: '10%' }} className="pb-6">Project Number</th>
+            <th style={{ width: '10%' }} className="pb-6">Trans. Code</th>
             <th style={{ width: '5%' }} className="pb-6"></th>
           </tr>
         </thead>
@@ -65,6 +69,7 @@ const Row: React.FC<{
   return (
     <tr>
       <td className="border-black p-1 border text-center">{no}</td>
+      <td className="border-black p-1 border">{e.date ?? ''}</td>
       <td className="border-black p-1 border">{e.itemName}</td>
       <td className="border-black p-1 border">{e.qty}</td>
       <td className="border-black p-1 border">{e.unit}</td>
