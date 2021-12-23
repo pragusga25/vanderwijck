@@ -26,6 +26,7 @@ export interface LogisticsMaterialCheckoutRevisionData {
   avl: number;
   itemId: number;
   itemLogId: number;
+  date?: string;
 }
 export interface LogisticsMaterialCheckoutRevisionChoices {
   PilihanRemarks: string[];
@@ -117,14 +118,15 @@ const LogisticsMaterialCheckoutRevision: React.FC<{
       <table className="w-full mt-16">
         <thead className="text-sm">
           <tr>
-            <th style={{ width: '11%' }}>Proj. No</th>
-            <th style={{ width: '11%' }}>Category</th>
-            <th style={{ width: '12%' }}>Code</th>
-            <th style={{ width: '26%' }}>Item Name</th>
-            <th style={{ width: '12%' }}>Subcode</th>
-            <th style={{ width: '4%' }}>Qty</th>
-            <th style={{ width: '4%' }}>Unit</th>
-            <th style={{ width: '15%' }}>Remarks</th>
+            <th style={{ width: '10%' }}>Date</th>
+            <th style={{ width: '10%' }}>Proj. No</th>
+            <th style={{ width: '10%' }}>Category</th>
+            <th style={{ width: '9%' }}>Code</th>
+            <th style={{ width: '22%' }}>Item Name</th>
+            <th style={{ width: '10%' }}>Subcode</th>
+            <th style={{ width: '5%' }}>Qty</th>
+            <th style={{ width: '5%' }}>Unit</th>
+            <th style={{ width: '14%' }}>Remarks</th>
             <th style={{ width: '5%' }}></th>
           </tr>
         </thead>
@@ -178,6 +180,7 @@ const Row: React.FC<{
   }
   return (
     <tr>
+      <td className=" text-center border-black border">{e.date ?? ''}</td>
       <td className=" text-center border-black border">{e.projectNo}</td>
       <td className="text-center border-black border">{e.category}</td>
       <td className="text-center border-black border">{e.code}</td>

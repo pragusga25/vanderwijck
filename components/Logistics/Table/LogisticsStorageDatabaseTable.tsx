@@ -7,6 +7,7 @@ export interface LogisticsStorageDatabaseData {
   unit: string;
   location: string;
   category: Category;
+  date?:string;
 }
 const LogisticsStorageDatabase: React.FC<{
   data: LogisticsStorageDatabaseData[];
