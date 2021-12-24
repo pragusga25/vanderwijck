@@ -68,6 +68,10 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
         const quantity = vals[val]['qty'];
         const remarkId = vals[val]['remark'];
 
+        if (!itemId) {
+          continue;
+        } // kalau nggak ada item, lewati
+
         const avlObj = data.find((item) => item.itemId === itemId);
         const avl = avlObj.avl;
 
@@ -103,6 +107,11 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
           remarkId: Number(remarkId),
         });
       }
+    }
+    if (dataPost.length == 0) {
+      return toast.error(
+        'Belum ada item yang dimasukan'
+      );
     }
 
     let URL = '/api/project/goodIssue/book';

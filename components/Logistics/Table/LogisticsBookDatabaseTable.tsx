@@ -14,8 +14,9 @@ const LogisticsBookDatabase: React.FC<{
       <table className="w-full">
         <thead className="">
           <tr>
+            <th className="w-1/12 pb-6">Date</th>
             <th className="w-1/12 pb-6">Item Code</th>
-            <th className="w-3/12 pb-6">Item Name</th>
+            <th className="w-2/12 pb-6">Item Name</th>
             <th className="w-1/12 pb-6">Qty</th>
             <th className="w-1/12 pb-6">Unit</th>
             <th className="w-2/12 pb-6">Location</th>
@@ -48,6 +49,7 @@ const Row: React.FC<{
   const [reason, setReason] = useState<string>('');
   return (
     <tr>
+      <td className="border-black p-1 border">{e.date ?? ''}</td>
       <td className="border-black p-1 border">{e.itemCode}</td>
       <td className="border-black p-1 border">{e.itemName}</td>
       <td className="border-black p-1 border">{e.qty}</td>

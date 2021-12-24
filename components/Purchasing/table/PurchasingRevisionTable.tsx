@@ -90,13 +90,14 @@ const PurchaseListRevisionTable: React.FC<{
       <table className="w-full mt-16">
         <thead className="text-sm">
           <tr>
-            <th style={{ width: '11%' }}>Proj. No</th>
-            <th style={{ width: '11%' }}>Category</th>
-            <th style={{ width: '26%' }}>Item Name</th>
+            <th style={{ width: '10%' }}>Date</th>
+            <th style={{ width: '8%' }}>Proj. No</th>
+            <th style={{ width: '9%' }}>Category</th>
+            <th style={{ width: '25%' }}>Item Name</th>
             <th style={{ width: '4%' }}>Qty</th>
             <th style={{ width: '4%' }}>Unit</th>
-            <th style={{ width: '12%' }}>Del. Terms</th>
-            <th style={{ width: '12%' }}>ETA</th>
+            <th style={{ width: '10%' }}>Del. Terms</th>
+            <th style={{ width: '10%' }}>ETA</th>
             <th style={{ width: '15%' }}>Sent To</th>
             <th style={{ width: '5%' }}></th>
           </tr>
@@ -149,6 +150,7 @@ const Row: React.FC<{
   }
   return (
     <tr>
+      <td className=" text-center border-black border">{e.date ?? ''}</td>
       <td className=" text-center border-black border">{e.projectNumber}</td>
       <td className="text-center border-black border">{e.category}</td>
       <td className="text-center border-black border">{e.itemName}</td>

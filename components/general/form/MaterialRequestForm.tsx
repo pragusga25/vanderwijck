@@ -41,16 +41,12 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
           const quantity = vals[val]['qty'];
           const remarkId = vals[val]['remark'];
 
-          if (!itemId || !quantity || !remarkId) {
-            return toast.error('Silkan lengkapi form terlebih dahulu');
+          if(!itemId){
+            continue;
           }
 
-          const avl = data.find((item) => item.itemId === itemId).avl;
-
-          if (Number(quantity) > avl) {
-            return toast.error(
-              'Quantity tidak boleh melebihi jumlah barang yang tersedia'
-            );
+          if (!itemId || !quantity || !remarkId) {
+            return toast.error('Silkan lengkapi form terlebih dahulu');
           }
 
           const itemName =
@@ -69,7 +65,11 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
           });
         }
       }
-
+      if (dataPost.length == 0) {
+        return toast.error(
+          'Belum ada item yang dimasukan'
+        );
+      }
       const URL = '/api/project/materialRequest';
 
       setLoading(true);
