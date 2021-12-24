@@ -20,6 +20,8 @@ export default function Page({
     avl: item.avl,
   }));
 
+  const refreshData = () => router.replace(router.asPath);
+
   return (
     <Layout
       colorType="white"
@@ -45,7 +47,12 @@ export default function Page({
             Booked Goods List
           </div>
         </div>
-        <GoodIssueForm data={data} remarks={remarks} />
+        <GoodIssueForm
+          data={data}
+          key={JSON.stringify(data)}
+          remarks={remarks}
+          refreshData={refreshData}
+        />
       </div>
     </Layout>
   );
