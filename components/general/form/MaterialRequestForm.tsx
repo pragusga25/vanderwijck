@@ -45,14 +45,6 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
             return toast.error('Silkan lengkapi form terlebih dahulu');
           }
 
-          const avl = data.find((item) => item.itemId === itemId).avl;
-
-          if (Number(quantity) > avl) {
-            return toast.error(
-              'Quantity tidak boleh melebihi jumlah barang yang tersedia'
-            );
-          }
-
           const itemName =
             data
               .find((d) => d.itemId === itemId)
