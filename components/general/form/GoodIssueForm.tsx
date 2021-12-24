@@ -20,10 +20,11 @@ export interface ItemProps {
   avl: number;
 }
 
-const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
-  data,
-  remarks,
-}) => {
+const Form: React.FC<{
+  data: ItemProps[];
+  remarks: Remark[];
+  refreshData?: () => void;
+}> = ({ data, remarks, refreshData }) => {
   const { register, getValues, setValue } = useForm();
   const [materials, addMaterials] = useState<any[]>(['']);
   const [isLoading, setLoading] = useState(false);
@@ -109,9 +110,7 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
       }
     }
     if (dataPost.length == 0) {
-      return toast.error(
-        'Belum ada item yang dimasukan'
-      );
+      return toast.error('Belum ada item yang dimasukan');
     }
 
     let URL = '/api/project/goodIssue/book';
@@ -134,7 +133,7 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
         }
       )
       .then(() => router.replace(router.asPath))
-      .finally(() => setLoading(false));
+      .finally(() => refreshData?.());
   };
 
   return (
@@ -164,7 +163,7 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
         </div>
         {materials.map((e, idx) => (
           <Material
-            key={`material-${idx}`}
+            key={`material-${idx}-${new Date().getTime()}`}
             setValue={setValue}
             data={data}
             register={register}
