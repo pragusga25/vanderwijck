@@ -29,13 +29,13 @@ Table ItemLog {
   remark Remark [not null]
   locationId Int
   location Location
-  transactionId Int [not null]
+  transactionId String [not null]
   transaction Transaction [not null]
   PriItemLog PriItemLog [not null]
 }
 
 Table Transaction {
-  id Int [pk, increment]
+  id String [pk]
   requestedBy String [not null]
   approvedBy String
   status Status [not null]

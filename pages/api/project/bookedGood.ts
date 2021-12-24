@@ -1,6 +1,7 @@
 import prisma from '@lib/prisma';
 import { NextApiHandler } from 'next';
 import { Status } from '@prisma/client';
+import uniqid from 'uniqid';
 
 const handler: NextApiHandler = async (req, res) => {
   if (req.method === 'POST') {
@@ -20,6 +21,7 @@ const handler: NextApiHandler = async (req, res) => {
             status: Status.ISSUE_REQUEST_SENT,
             requestedBy: dataPost.requestedBy,
             projectId: 1367,
+            id: uniqid(),
           },
         });
 
@@ -53,8 +55,8 @@ const handler: NextApiHandler = async (req, res) => {
         message: 'success',
       });
     } catch (err) {
-      console.log(err.message);
       res.status(500).json({
+        object: err,
         message: 'Error',
       });
     }
