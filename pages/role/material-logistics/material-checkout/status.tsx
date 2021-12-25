@@ -1,9 +1,5 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
-import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
-import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
 import LogisticsMaterialCheckout, {
   LogisticsMaterialCheckoutData,
@@ -11,6 +7,7 @@ import LogisticsMaterialCheckout, {
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
 import { STATUS } from '@constants/index';
+import { dateToTime } from '@utils/funcs';
 
 export default function Page({
   data,
@@ -50,6 +47,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const itemLogs = await prisma.itemLog.findMany({
     select: {
       transactionId: true,
+      date: true,
       item: {
         select: {
           name: true,
@@ -63,6 +61,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     transactionNumber: d.transactionId + '',
     itemName: d.item.name,
     status: STATUS[d.status],
+    date: dateToTime(d.date),
   }));
   return {
     props: {

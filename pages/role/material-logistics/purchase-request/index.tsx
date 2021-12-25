@@ -11,6 +11,7 @@ import prisma from '@lib/prisma';
 import { Status } from '@prisma/client';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { dateToTime } from '../../../../utils/funcs';
 
 export default function Page({
   data,
@@ -28,8 +29,6 @@ export default function Page({
     setCheckedIndex(res);
   }
   async function handleSend() {
-    console.log('Send request');
-    console.log(data.filter((e, idx) => checkedIndex[idx]));
     const filteredData = data.filter((e, idx) => checkedIndex[idx]);
 
     if (filteredData.length === 0)
@@ -103,6 +102,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
     select: {
       id: true,
+      date: true,
       transaction: {
         select: {
           id: true,
@@ -133,6 +133,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     itemLogId: log.id,
     itemCode: log.item.code,
     unit: log.unit,
+    date: dateToTime(log.date),
   }));
 
   return {

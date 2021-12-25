@@ -8,6 +8,7 @@ import { GetServerSideProps } from 'next';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { useState } from 'react';
+import { dateToTime } from '@utils/funcs';
 
 export default function Page({ data }) {
   const router = useRouter();
@@ -77,6 +78,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
     select: {
       id: true,
+      date: true,
       quantity: true,
       unit: true,
       location: {
@@ -102,6 +104,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     unit: it.unit,
     location: it.location?.name ?? 'Tanjung Riau Warehouse',
     category: it.item.category,
+    date: dateToTime(it.date),
   }));
 
   return {

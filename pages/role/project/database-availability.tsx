@@ -110,7 +110,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       date: dateStr(new Date(log.date)),
       projectNo: '1376',
       qty: log.quantity + '',
-      status: STATUS[log.status],
+      status: STATUS[log.status] ?? '',
     })),
   }));
 
