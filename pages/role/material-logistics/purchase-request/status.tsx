@@ -46,6 +46,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const prItemLogs = await prisma.priItemLog.findMany({
     select: {
       id: true,
+      date: true,
       purchaseRequestId: true,
       status: true,
       parentItemLog: {
@@ -67,6 +68,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   const data: LogisticsPurchaseRequestStatusData[] = prItemLogs.map((d) => ({
     projectNo: '1367',
+    date: d.date.toString(),
     itemName: d.parentItemLog.item.name,
     status: STATUS[d.status],
     transactionNumber: d.parentItemLog.transaction.id + '',
