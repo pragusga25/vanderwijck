@@ -43,6 +43,9 @@ const Form: React.FC<{
       await postData();
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      refreshData?.();
+      setLoading(false);
     }
   }
 
@@ -52,6 +55,9 @@ const Form: React.FC<{
       await postData(true);
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      refreshData?.();
+      setLoading(false);
     }
   }
 
@@ -119,21 +125,18 @@ const Form: React.FC<{
     }
 
     setLoading(true);
-    toast
-      .promise(
-        axios.post(URL, {
-          dataPost,
-          requestedBy: vals.requestedBy as string,
-          approvedBy: vals.approvedBy as string,
-        }),
-        {
-          success: 'Data berhasil dibuat',
-          error: 'Data gagal dibuat',
-          loading: 'Membuat data...',
-        }
-      )
-      .then(() => router.replace(router.asPath))
-      .finally(() => refreshData?.());
+    await toast.promise(
+      axios.post(URL, {
+        dataPost,
+        requestedBy: vals.requestedBy as string,
+        approvedBy: vals.approvedBy as string,
+      }),
+      {
+        success: 'Data berhasil dibuat',
+        error: 'Data gagal dibuat',
+        loading: 'Membuat data...',
+      }
+    );
   };
 
   return (

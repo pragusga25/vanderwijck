@@ -7,6 +7,8 @@ import ProjectNavigation from '@components/Project/ProjectNavigation';
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
 import { Status } from '@prisma/client';
+import { dateToTime } from '@utils/funcs';
+import { STATUS } from '@constants/index';
 
 export default function Page({ data }: { data: ProjectStatusData[] }) {
   const router = useRouter();
@@ -48,6 +50,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     },
     select: {
       transactionId: true,
+      date: true,
       quantity: true,
       unit: true,
       status: true,
@@ -61,6 +64,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         select: {
           projectId: true,
           approvedBy: true,
+          requestedBy: true,
         },
       },
     },
@@ -74,7 +78,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     qty: log.quantity + '',
     unit: log.unit + '',
     approvedBy: log.transaction.approvedBy ?? 'Iqbal Baihaqi',
-    status: log.status,
+    requestedBy: log.transaction.requestedBy ?? 'Iqbal Baihaqi',
+    status: STATUS[log.status],
+    date: dateToTime(new Date(log.date)),
   }));
 
   return {

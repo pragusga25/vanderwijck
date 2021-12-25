@@ -12,4 +12,5 @@ export const STATUS = {
   SELECTED_FOR_CHECKOUT: 'Selected for Checkout',
   BOOK_REQUEST: 'Book Request',
   DECLINED: 'Declined',
+  BOOK_CANCELLED: 'Booked Cancelled',
 };

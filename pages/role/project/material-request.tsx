@@ -39,7 +39,7 @@ export default function Page({
             Material Request
           </h1>
         </div>
-        <MaterialRequestForm data={data} remarks={remarks} />
+        <MaterialRequestForm data={data} remarks={remarks} key={JSON.stringify(data)} />
       </div>
     </Layout>
   );
