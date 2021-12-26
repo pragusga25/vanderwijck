@@ -7,6 +7,7 @@ import PurchasingStatusTable, {
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
 import {STATUS} from '../../../constants'
+import { dateToTime } from '../../../utils/funcs';
 
 export default function Page({data}:{data:PurchasingStatusData[]}) {
   const router = useRouter();
@@ -57,7 +58,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   const data: PurchasingStatusData[] = priItemLogs.map((log) => ({
     status: STATUS[`${log.status}`]+'',
-    date: log.date+'',
+    date: dateToTime(new Date(log.date)),
     name: log.parentItemLog.item.name+'',
     subcode: log.parentItemLog.item.subcodeValue+'',
     qty: log.quantity,
