@@ -11,6 +11,7 @@ const handler: NextApiHandler = async (req, res) => {
       itemId: number;
       remarkId: number;
       quantity: number;
+      oldQty: number;
     }[] = body.dataPost;
 
     try {
@@ -37,7 +38,7 @@ const handler: NextApiHandler = async (req, res) => {
             },
             data: {
               avl: {
-                decrement: d.quantity,
+                decrement: d.quantity - d.oldQty,
               },
             },
           })
@@ -48,9 +49,8 @@ const handler: NextApiHandler = async (req, res) => {
         status: 'success',
       });
     } catch (err) {
-      
       res.status(500).json({
-object: err,
+        object: err,
         message: 'Error',
       });
     }

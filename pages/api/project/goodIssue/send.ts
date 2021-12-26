@@ -26,6 +26,8 @@ const handler: NextApiHandler = async (req, res) => {
         transactionId,
       }));
 
+      console.log(dataFix);
+
       await prisma.itemLog.createMany({
         data: dataFix,
       });

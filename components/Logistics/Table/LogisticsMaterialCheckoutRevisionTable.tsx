@@ -49,6 +49,7 @@ const LogisticsMaterialCheckoutRevision: React.FC<{
     checkedIndex.forEach((bol, idx) => {
       if (bol) checkedResult.push(allResult[idx]);
     });
+
     let remarkSelectd = true;
     let itemIdAvlMap: { [key: number]: number } = {};
 
@@ -63,7 +64,8 @@ const LogisticsMaterialCheckoutRevision: React.FC<{
     if (!remarkSelectd) return toast.error('Silkan lengkapi fields');
 
     checkedResult.forEach((d) => {
-      itemIdAvlMap[d.itemId] = itemIdAvlMap[d.itemId] - Number(d.qty);
+      itemIdAvlMap[d.itemId] =
+        itemIdAvlMap[d.itemId] - (Number(d.qty) - Number(d.oldQty));
     });
 
     let isMinus = false;
@@ -80,8 +82,10 @@ const LogisticsMaterialCheckoutRevision: React.FC<{
       ).id,
       itemId: d.itemId,
       quantity: Number(d.qty),
+      oldQty: Number(d.oldQty),
     }));
-
+    // console.log(dataPost);
+    // return;
     try {
       setLoading(true);
       await toast.promise(
@@ -169,6 +173,7 @@ const Row: React.FC<{
     setValue(`e.${idx}.avl`, e.avl);
     setValue(`e.${idx}.itemId`, e.itemId);
     setValue(`e.${idx}.itemLogId`, e.itemLogId);
+    setValue(`e.${idx}.oldQty`, e.qty);
   }, []);
   function extractChoices(data: string[]): SelectObject[] {
     return data.map((e) => {
