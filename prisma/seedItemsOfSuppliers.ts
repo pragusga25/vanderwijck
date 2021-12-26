@@ -9,6 +9,7 @@ import {
   // const prisma = new PrismaClient();
   
   const seed = async () => {  
+    await prisma.supplier.createMany({ data: suppliers });
     for (const supplier of suppliers) {
       for (const item of items) {
         if ((supplier.category as string[]).includes(item.category)) {
