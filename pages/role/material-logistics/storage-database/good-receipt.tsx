@@ -25,7 +25,7 @@ export default function Page({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<LogisticsGoodReceiptData[]>(null);
+  const [data, setData] = useState<LogisticsGoodReceiptData[]>(databases);
   const handleSearch = (formData) => {
     const filter = formData.e;
     const categoryId: Category = filter.categoryId;
@@ -120,31 +120,31 @@ export default function Page({
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const prs = await prisma.purchaseRequest.findMany({
+  const prs = await prisma.priItemLog.findMany({
+    where: {
+      status: Status.DELIVERY,
+    },
     select: {
-      PriItemLog: {
+      id: true,
+      date: true,
+      quantity: true,
+      parentItemLog: {
         select: {
+          status: true,
           id: true,
-          date: true,
-          parentItemLog: {
+          itemId: true,
+          location: {
             select: {
-              status: true,
-              id: true,
-              itemId: true,
-              location: {
-                select: {
-                  name: true,
-                },
-              },
-              transactionId: true,
-              item: {
-                select: {
-                  name: true,
-                  category: true,
-                  code: true,
-                  quantity: true,
-                },
-              },
+              name: true,
+            },
+          },
+          transactionId: true,
+          item: {
+            select: {
+              name: true,
+              category: true,
+              code: true,
+              quantity: true,
             },
           },
         },
@@ -155,26 +155,20 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const items: { name: string; category: Category }[] = [];
   const databases: LogisticsGoodReceiptData[] = [];
 
-  prs.forEach((pr) => {
-    pr.PriItemLog.forEach((it) => {
-      if (it.parentItemLog.status !== Status.DELIVERED) {
-        items.push({ ...it.parentItemLog.item });
-        databases.push({
-          itemName: it.parentItemLog.item.name,
-          qty: it.parentItemLog.item.quantity + '',
-          unit:
-            it.parentItemLog.item.category === Category.PIPE ? 'meter' : 'pcs',
-          warehouse:
-            it.parentItemLog.location?.name ?? 'Warehouse Tanjung Riau',
-          transCode: it.parentItemLog.transactionId + '',
-          projectNumber: '1367',
-          category: it.parentItemLog.item.category,
-          itemId: it.parentItemLog.itemId,
-          itemLogId: it.parentItemLog.id,
-          prItemLogId: it.id,
-          date: dateToTime(it.date),
-        });
-      }
+  prs.forEach((it) => {
+    items.push({ ...it.parentItemLog.item });
+    databases.push({
+      itemName: it.parentItemLog.item.name,
+      qty: it.quantity + '',
+      unit: it.parentItemLog.item.category === Category.PIPE ? 'meter' : 'pcs',
+      warehouse: it.parentItemLog.location?.name ?? 'Warehouse Tanjung Riau',
+      transCode: it.parentItemLog.transactionId + '',
+      projectNumber: '1367',
+      category: it.parentItemLog.item.category,
+      itemId: it.parentItemLog.itemId,
+      itemLogId: it.parentItemLog.id,
+      prItemLogId: it.id,
+      date: dateToTime(it.date),
     });
   });
 
