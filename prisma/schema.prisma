@@ -69,8 +69,8 @@ model PriItemLog {
   quantity   Int
   date       DateTime  @default(now())
   incoterm   Incoterms
-  supplierId Int
-  supplier   Supplier  @relation(fields: [supplierId], references: [id])
+  supplierId Int?
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
 
   purchaseRequestId Int
   purchaseRequest   PurchaseRequest @relation(fields: [purchaseRequestId], references: [id])

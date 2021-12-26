@@ -51,8 +51,8 @@ Table PriItemLog {
   quantity Int [not null]
   date DateTime [default: `now()`, not null]
   incoterm Incoterms [not null]
-  supplierId Int [not null]
-  supplier Supplier [not null]
+  supplierId Int
+  supplier Supplier
   purchaseRequestId Int [not null]
   purchaseRequest PurchaseRequest [not null]
   parentItemLogId Int [not null]
