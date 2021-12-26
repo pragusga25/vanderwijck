@@ -14,6 +14,7 @@ import { Category, Status } from '@prisma/client';
 import uniq from 'lodash.uniq';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { dateToTime } from '@utils/funcs';
 
 export default function Page({
   categories,
@@ -124,6 +125,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       PriItemLog: {
         select: {
           id: true,
+          date: true,
           parentItemLog: {
             select: {
               status: true,
@@ -170,6 +172,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           itemId: it.parentItemLog.itemId,
           itemLogId: it.parentItemLog.id,
           prItemLogId: it.id,
+          date: dateToTime(it.date),
         });
       }
     });

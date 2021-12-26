@@ -38,13 +38,10 @@ export default function Page({data}:{data:PurchasingStatusData[]}) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const priItemLogs = await prisma.priItemLog.findMany({
     select: {
+      status: true,
+      date: true,
       parentItemLog: {
         select: {
-          transaction: {
-            select: {
-              status: true
-            }
-          },
           item: {
             select: {
               name: true,
@@ -59,7 +56,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   });
 
   const data: PurchasingStatusData[] = priItemLogs.map((log) => ({
-    status: STATUS[`${log.parentItemLog.transaction.status}`]+'',
+    status: STATUS[`${log.status}`]+'',
+    date: log.date+'',
     name: log.parentItemLog.item.name+'',
     subcode: log.parentItemLog.item.subcodeValue+'',
     qty: log.quantity,

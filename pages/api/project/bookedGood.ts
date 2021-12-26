@@ -12,6 +12,8 @@ const handler: NextApiHandler = async (req, res) => {
       requestedBy: string;
       isCanceled: boolean;
       quantity: number;
+      s;
+      transactionCode: string;
     } = body.dataPost;
 
     try {
@@ -38,13 +40,30 @@ const handler: NextApiHandler = async (req, res) => {
           },
         });
       } else {
-        await prisma.itemLog.update({
+        await prisma.transaction.update({
+          where: {
+            id: dataPost.transactionCode,
+          },
+          data: {
+            status: Status.BOOK_CANCELLED,
+          },
+        });
+
+        const d = await prisma.itemLog.update({
           where: {
             id: dataPost.itemLogId,
           },
           data: {
-            status: Status.CANCELLED,
-            quantity: {
+            status: Status.BOOK_CANCELLED,
+          },
+        });
+
+        await prisma.item.update({
+          where: {
+            id: d.itemId,
+          },
+          data: {
+            booked: {
               decrement: dataPost.quantity,
             },
           },

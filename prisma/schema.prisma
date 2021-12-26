@@ -149,6 +149,7 @@ enum Status {
   SELECTED_FOR_CHECKOUT
   BOOK_REQUEST
   DECLINED
+  BOOK_CANCELLED
 }
 
 enum Incoterms {
