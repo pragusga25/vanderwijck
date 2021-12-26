@@ -41,7 +41,7 @@ const handler: NextApiHandler = async (req, res) => {
                 id: data.prItemLogId,
               },
               data: {
-                status: Status.DELIVERED,
+                status: Status.DELIVERY,
                 date: data.date,
                 incoterm: data.delTerm,
                 quantity: data.quantity,
