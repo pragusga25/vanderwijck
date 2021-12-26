@@ -8,6 +8,7 @@ import SupplierSearchBar from '@components/Purchasing/PurchasingSearchBar';
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
 import { Incoterms } from '@prisma/client';
+import { dateToTime } from '../../../../utils/funcs';
 
 export default function Page({ myChoices, mySupplierData, myPrItemLogs }) {
   const router = useRouter();
@@ -138,7 +139,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   const myPrItemLogs = prItemLogs.map((pr) => ({
     projectNumber: '1367',
-    date: pr.date.toString(),
+    date: dateToTime(new Date(pr.date)),
     category: pr.parentItemLog.item.category,
     itemName: pr.parentItemLog.item.name,
     qty: pr.quantity + '',
