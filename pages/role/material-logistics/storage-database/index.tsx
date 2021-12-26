@@ -22,7 +22,7 @@ export default function Page({
   databases: LogisticsStorageDatabaseData[];
 }) {
   const router = useRouter();
-  const [data, setData] = useState<LogisticsStorageDatabaseData[]>(null);
+  const [data, setData] = useState<LogisticsStorageDatabaseData[]>(databases);
   const handleSearch = (formData) => {
     const filter = formData.e;
     const categoryId: Category = filter.categoryId;
