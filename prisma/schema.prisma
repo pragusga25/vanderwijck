@@ -63,12 +63,14 @@ model Transaction {
 }
 
 model PriItemLog {
-  id       Int       @id @default(autoincrement())
-  status   Status
-  unit     String
-  quantity Int
-  date     DateTime  @default(now())
-  incoterm Incoterms
+  id         Int       @id @default(autoincrement())
+  status     Status
+  unit       String
+  quantity   Int
+  date       DateTime  @default(now())
+  incoterm   Incoterms
+  supplierId Int
+  supplier   Supplier  @relation(fields: [supplierId], references: [id])
 
   purchaseRequestId Int
   purchaseRequest   PurchaseRequest @relation(fields: [purchaseRequestId], references: [id])
@@ -93,6 +95,7 @@ model Supplier {
 
   ItemsOnSuppliers ItemsOnSuppliers[]
   PurchaseOrder    PurchaseOrder[]
+  PriItemLog       PriItemLog[]
 }
 
 model Project {
