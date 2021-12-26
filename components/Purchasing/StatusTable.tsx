@@ -7,6 +7,7 @@ export interface PurchasingStatusData {
   id: any;
   date?: string;
   transCode?: string;
+  supplierStatus?: string;
 }
 const PurchasingStatusTable: React.FC<{ data: PurchasingStatusData[] }> = ({
   data,
@@ -23,8 +24,9 @@ const PurchasingStatusTable: React.FC<{ data: PurchasingStatusData[] }> = ({
             <th className="w-1/6">Trans. Code</th>
             <th className="w-1/6">Trans. Status</th>
             <th className="w-1/6">Item Name</th>
-            <th className="w-1/6">Subcode</th>
-            <th className="w-1/6">Quantity</th>
+            <th className="w-1/12">Subcode</th>
+            <th className="w-1/12">Quantity</th>
+            <th className="w-1/6">Supplier Status</th>
           </tr>
         </thead>
         <tbody>
@@ -37,6 +39,7 @@ const PurchasingStatusTable: React.FC<{ data: PurchasingStatusData[] }> = ({
                 <td className="border-black border">{e.name}</td>
                 <td className="border-black border">{e.subcode}</td>
                 <td className="border-black border">{e.qty}</td>
+                <td className="border-black border">{e.supplierStatus ?? ''}</td>
               </tr>
             );
           })}
