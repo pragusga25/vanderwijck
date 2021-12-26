@@ -27,6 +27,9 @@ const handler: NextApiHandler = async (req, res) => {
               quantity: {
                 increment: Number(it.quantity),
               },
+              avl: {
+                increment: Number(it.quantity),
+              },
             },
           })
         )
