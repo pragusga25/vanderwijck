@@ -51,6 +51,8 @@ Table PriItemLog {
   quantity Int [not null]
   date DateTime [default: `now()`, not null]
   incoterm Incoterms [not null]
+  supplierId Int [not null]
+  supplier Supplier [not null]
   purchaseRequestId Int [not null]
   purchaseRequest PurchaseRequest [not null]
   parentItemLogId Int [not null]
@@ -72,6 +74,7 @@ Table Supplier {
   category Category [not null]
   ItemsOnSuppliers ItemsOnSuppliers [not null]
   PurchaseOrder PurchaseOrder [not null]
+  PriItemLog PriItemLog [not null]
 }
 
 Table Project {
@@ -148,6 +151,8 @@ Ref: ItemLog.locationId > Location.id
 Ref: ItemLog.transactionId > Transaction.id
 
 Ref: Transaction.projectId > Project.id
+
+Ref: PriItemLog.supplierId > Supplier.id
 
 Ref: PriItemLog.purchaseRequestId > PurchaseRequest.id
 
