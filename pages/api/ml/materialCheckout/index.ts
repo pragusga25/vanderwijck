@@ -23,31 +23,30 @@ const handler: NextApiHandler = async (req, res) => {
 
       console.log(isDecline, 'ISCCDDD');
 
-      if (!isDecline)
-        Promise.all(
-          dataPost.map((d) =>
-            prisma.item.update({
-              where: {
-                id: d.itemId,
-              },
-              data: {
-                avl: {
-                  decrement: d.quantity,
-                },
-              },
-            })
-          )
-        ).then(() => {
-          console.log('Successfully');
-        });
+      // if (!isDecline)
+      //   Promise.all(
+      //     dataPost.map((d) =>
+      //       prisma.item.update({
+      //         where: {
+      //           id: d.itemId,
+      //         },
+      //         data: {
+      //           avl: {
+      //             decrement: d.quantity,
+      //           },
+      //         },
+      //       })
+      //     )
+      //   ).then(() => {
+      //     console.log('Successfully');
+      //   });
 
       res.status(200).json({
         status: 'success',
       });
     } catch (err) {
-      
       res.status(500).json({
-object: err,
+        object: err,
         message: 'Error',
       });
     }
