@@ -93,12 +93,13 @@ const PurchaseListRevisionTable: React.FC<{
             <th style={{ width: '10%' }}>Date</th>
             <th style={{ width: '8%' }}>Proj. No</th>
             <th style={{ width: '9%' }}>Category</th>
-            <th style={{ width: '25%' }}>Item Name</th>
+            <th style={{ width: '20%' }}>Item Name</th>
             <th style={{ width: '4%' }}>Qty</th>
             <th style={{ width: '4%' }}>Unit</th>
             <th style={{ width: '10%' }}>Del. Terms</th>
             <th style={{ width: '10%' }}>ETA</th>
-            <th style={{ width: '15%' }}>Sent To</th>
+            <th style={{ width: '10%' }}>Sent To</th>
+            <th style={{ width: '10%' }}>Supplier</th>
             <th style={{ width: '5%' }}></th>
           </tr>
         </thead>
@@ -186,6 +187,16 @@ const Row: React.FC<{
           choices={extractChoices(choices.PilihanTujuan)}
           defaultValue={''}
           fieldName="sentTo"
+          withSelect
+        />
+      </td>
+      <td className="p-1.5 border-black border">
+        <LogisticsSelectPlainField
+          className="w-full"
+          onChange={handleChange}
+          choices={extractChoices(e.supplierName)}
+          defaultValue={''}
+          fieldName="supplierName"
           withSelect
         />
       </td>

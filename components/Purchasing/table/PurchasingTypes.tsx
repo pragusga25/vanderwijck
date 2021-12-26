@@ -21,6 +21,7 @@ export interface PurchaseItemLogRevision {
   prItemLogId?: number;
   itemLogId?: number;
   date?: string;
+  supplierName?: string[];
 }
 
 export interface PurchasingRevisionChoices {
