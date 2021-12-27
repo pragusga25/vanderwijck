@@ -10,6 +10,7 @@ export interface ProjectStatusData {
   requestedBy?:string;
   approvedBy: string;
   status: string;
+  rejectedReason?:string;
 }
 const StatusTable: React.FC<{ data: ProjectStatusData[] }> = ({ data }) => {
   return (
@@ -17,16 +18,17 @@ const StatusTable: React.FC<{ data: ProjectStatusData[] }> = ({ data }) => {
       <table>
         <thead className="text-sm">
           <tr>
-            <th style={{ width: '12%' }}>Waktu</th>
+            <th style={{ width: '10%' }}>Waktu</th>
             <th style={{ width: '10%' }}>Project No</th>
             <th style={{ width: '10%' }}>Transaction Number</th>
-            <th style={{ width: '20%' }}>Item Name</th>
+            <th style={{ width: '15%' }}>Item Name</th>
             <th style={{ width: '5%' }}>Subcode</th>
             <th style={{ width: '5%' }}>Qty</th>
             <th style={{ width: '5%' }}>Unit</th>
-            <th style={{ width: '12%' }}>Requested By</th>
-            <th style={{ width: '12%' }}>Approved By</th>
-            <th style={{ width: '8%' }}>Status</th>
+            <th style={{ width: '10%' }}>Requested By</th>
+            <th style={{ width: '10%' }}>Approved By</th>
+            <th style={{ width: '10%' }}>Status</th>
+            <th style={{ width: '10%' }}>Reason</th>
           </tr>
         </thead>
         <tbody>
@@ -43,6 +45,7 @@ const StatusTable: React.FC<{ data: ProjectStatusData[] }> = ({ data }) => {
                 <td className="border-black border">{e.requestedBy ?? ''}</td>
                 <td className="border-black border">{e.approvedBy}</td>
                 <td className="border-black border">{e.status}</td>
+                <td className="border-black border">{e.rejectedReason ?? ''}</td>
               </tr>
             );
           })}
