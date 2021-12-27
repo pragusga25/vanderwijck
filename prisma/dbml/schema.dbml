@@ -29,13 +29,13 @@ Table ItemLog {
   remark Remark [not null]
   locationId Int
   location Location
-  transactionId Int [not null]
+  transactionId String [not null]
   transaction Transaction [not null]
   PriItemLog PriItemLog [not null]
 }
 
 Table Transaction {
-  id Int [pk, increment]
+  id String [pk]
   requestedBy String [not null]
   approvedBy String
   status Status [not null]
@@ -51,6 +51,8 @@ Table PriItemLog {
   quantity Int [not null]
   date DateTime [default: `now()`, not null]
   incoterm Incoterms [not null]
+  supplierId Int
+  supplier Supplier
   purchaseRequestId Int [not null]
   purchaseRequest PurchaseRequest [not null]
   parentItemLogId Int [not null]
@@ -72,6 +74,7 @@ Table Supplier {
   category Category [not null]
   ItemsOnSuppliers ItemsOnSuppliers [not null]
   PurchaseOrder PurchaseOrder [not null]
+  PriItemLog PriItemLog [not null]
 }
 
 Table Project {
@@ -128,6 +131,7 @@ Enum Status {
   SELECTED_FOR_CHECKOUT
   BOOK_REQUEST
   DECLINED
+  BOOK_CANCELLED
 }
 
 Enum Incoterms {
@@ -147,6 +151,8 @@ Ref: ItemLog.locationId > Location.id
 Ref: ItemLog.transactionId > Transaction.id
 
 Ref: Transaction.projectId > Project.id
+
+Ref: PriItemLog.supplierId > Supplier.id
 
 Ref: PriItemLog.purchaseRequestId > PurchaseRequest.id
 

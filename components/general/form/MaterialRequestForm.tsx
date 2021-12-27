@@ -10,6 +10,7 @@ import { SelectPlainField } from './SelectPlainField';
 import { Remark, Status } from '@prisma/client';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 
 export interface ItemProps {
   itemName: string;
@@ -20,6 +21,7 @@ export interface ItemProps {
 
 const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
   ({ data, remarks }) => {
+    const router = useRouter();
     const { register, getValues, setValue } = useForm();
     const [materials, addMaterials] = useState<any[]>(['']);
     const [loading, setLoading] = useState(false);
@@ -41,20 +43,12 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
           const quantity = vals[val]['qty'];
           const remarkId = vals[val]['remark'];
 
-          if(!itemId){
+          if (!itemId) {
             continue;
           }
 
           if (!itemId || !quantity || !remarkId) {
             return toast.error('Silkan lengkapi form terlebih dahulu');
-          }
-
-          const avl = data.find((item) => item.itemId === itemId).avl;
-
-          if (Number(quantity) > avl) {
-            return toast.error(
-              'Quantity tidak boleh melebihi jumlah barang yang tersedia'
-            );
           }
 
           const itemName =
@@ -74,9 +68,7 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
         }
       }
       if (dataPost.length == 0) {
-        return toast.error(
-          'Belum ada item yang dimasukan'
-        );
+        return toast.error('Belum ada item yang dimasukan');
       }
       const URL = '/api/project/materialRequest';
 
@@ -94,6 +86,7 @@ const MaterialRequestForm: React.FC<{ data: ItemProps[]; remarks: Remark[] }> =
             loading: 'Membuat data...',
           }
         )
+        .then(() => router.replace(router.asPath))
         .finally(() => setLoading(false));
     }
 

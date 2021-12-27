@@ -7,6 +7,7 @@ import PurchasingStatusTable, {
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
 import {STATUS} from '../../../constants'
+import { dateToTime } from '../../../utils/funcs';
 
 export default function Page({data}:{data:PurchasingStatusData[]}) {
   const router = useRouter();
@@ -38,13 +39,10 @@ export default function Page({data}:{data:PurchasingStatusData[]}) {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const priItemLogs = await prisma.priItemLog.findMany({
     select: {
+      status: true,
+      date: true,
       parentItemLog: {
         select: {
-          transaction: {
-            select: {
-              status: true
-            }
-          },
           item: {
             select: {
               name: true,
@@ -59,7 +57,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   });
 
   const data: PurchasingStatusData[] = priItemLogs.map((log) => ({
-    status: STATUS[`${log.parentItemLog.transaction.status}`]+'',
+    status: STATUS[`${log.status}`]+'',
+    date: dateToTime(new Date(log.date)),
     name: log.parentItemLog.item.name+'',
     subcode: log.parentItemLog.item.subcodeValue+'',
     qty: log.quantity,

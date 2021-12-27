@@ -20,10 +20,11 @@ export interface ItemProps {
   avl: number;
 }
 
-const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
-  data,
-  remarks,
-}) => {
+const Form: React.FC<{
+  data: ItemProps[];
+  remarks: Remark[];
+  refreshData?: () => void;
+}> = ({ data, remarks, refreshData }) => {
   const { register, getValues, setValue } = useForm();
   const [materials, addMaterials] = useState<any[]>(['']);
   const [isLoading, setLoading] = useState(false);
@@ -42,6 +43,9 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
       await postData();
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      refreshData?.();
+      setLoading(false);
     }
   }
 
@@ -51,6 +55,9 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
       await postData(true);
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      refreshData?.();
+      setLoading(false);
     }
   }
 
@@ -109,9 +116,7 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
       }
     }
     if (dataPost.length == 0) {
-      return toast.error(
-        'Belum ada item yang dimasukan'
-      );
+      return toast.error('Belum ada item yang dimasukan');
     }
 
     let URL = '/api/project/goodIssue/book';
@@ -120,21 +125,18 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
     }
 
     setLoading(true);
-    toast
-      .promise(
-        axios.post(URL, {
-          dataPost,
-          requestedBy: vals.requestedBy as string,
-          approvedBy: vals.approvedBy as string,
-        }),
-        {
-          success: 'Data berhasil dibuat',
-          error: 'Data gagal dibuat',
-          loading: 'Membuat data...',
-        }
-      )
-      .then(() => router.replace(router.asPath))
-      .finally(() => setLoading(false));
+    await toast.promise(
+      axios.post(URL, {
+        dataPost,
+        requestedBy: vals.requestedBy as string,
+        approvedBy: vals.approvedBy as string,
+      }),
+      {
+        success: 'Data berhasil dibuat',
+        error: 'Data gagal dibuat',
+        loading: 'Membuat data...',
+      }
+    );
   };
 
   return (
@@ -164,7 +166,7 @@ const Form: React.FC<{ data: ItemProps[]; remarks: Remark[] }> = ({
         </div>
         {materials.map((e, idx) => (
           <Material
-            key={`material-${idx}`}
+            key={`material-${idx}-${new Date().getTime()}`}
             setValue={setValue}
             data={data}
             register={register}

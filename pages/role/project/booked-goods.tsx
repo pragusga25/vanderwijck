@@ -52,6 +52,9 @@ export default function Page({
   async function dummyOnCancel(x: ProjectBookedGoodData) {
     if (loading) return;
 
+    // console.log(x);
+    // return;
+
     setLoading(true);
     await toast
       .promise(
@@ -68,7 +71,7 @@ export default function Page({
       .catch((e) => toast.error(e.message))
       .finally(() => setLoading(false));
   }
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<any>(myData);
   return (
     <Layout
       colorType="white"
@@ -156,7 +159,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         projectNo: '1367',
         qty: item.quantity + '',
         subcode: item.item.subcodeValue,
-        transactionCode: tr.id + '',
+        transactionCode: tr.id,
         unit: item.item.category === Category.PIPE ? 'm' : 'pcs',
       });
     });

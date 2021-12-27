@@ -11,7 +11,7 @@ const handler: NextApiHandler = async (req, res) => {
       itemLogId: number;
       date: Date;
       delTerm: Incoterms;
-      senTo: string;
+      sentTo: string;
       quantity: number;
     }[] = body.datas;
 
@@ -20,7 +20,7 @@ const handler: NextApiHandler = async (req, res) => {
         datas.map(async (data) => {
           const loc = await prisma.location.findFirst({
             where: {
-              name: data.senTo,
+              name: data.sentTo,
             },
           });
 
@@ -57,8 +57,9 @@ const handler: NextApiHandler = async (req, res) => {
         message: 'success',
       });
     } catch (err) {
-      console.log(err.message);
+      
       res.status(500).json({
+object: err,
         message: 'Error',
       });
     }

@@ -9,6 +9,7 @@ import { useState } from 'react';
 import prisma from '@lib/prisma';
 import { GetServerSideProps } from 'next';
 import { Remark, Status } from '@prisma/client';
+import { dateToTime } from '@utils/funcs';
 
 export default function Page({
   data: myData,
@@ -77,6 +78,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     select: {
       id: true,
       quantity: true,
+      date: true,
       unit: true,
       item: {
         select: {
@@ -105,6 +107,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     avl: it.item.avl,
     itemId: it.item.id,
     itemLogId: it.id,
+    date: dateToTime(it.date),
   }));
 
   return {
