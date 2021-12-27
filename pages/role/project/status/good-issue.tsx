@@ -44,6 +44,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const itemLogs = await prisma.itemLog.findMany({
     select: {
       transactionId: true,
+      rejectedReason: true,
       quantity: true,
       date: true,
       unit: true,
@@ -75,6 +76,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     status: STATUS[log.status],
     date: dateToTime(log.date),
     requestedBy: log.transaction.requestedBy ?? 'Iqbal Baihaqi',
+    rejectedReason: log.rejectedReason ?? '',
   }));
 
   return {
