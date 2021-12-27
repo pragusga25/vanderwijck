@@ -49,7 +49,7 @@ const PurchaseListRevisionTable: React.FC<{
     let isValid = true;
 
     checkedResult.forEach((d) => {
-      if (!d.eta || !d.sentTo || !d.deliveryTerm) isValid = false;
+      if (!d.eta || !d.sentTo || !d.deliveryTerm || !d.supplierName) isValid = false;
     });
 
     if (!isValid) return toast.error('Please fill all fields');
@@ -60,7 +60,9 @@ const PurchaseListRevisionTable: React.FC<{
       delTerm: d.deliveryTerm as Incoterms,
       sentTo: d.sentTo as string,
       quantity: Number(d.qty),
+      supplierName: d.supplierName
     }));
+    console.log(dataPost);
 
     setLoading(true);
 
@@ -96,8 +98,8 @@ const PurchaseListRevisionTable: React.FC<{
             <th style={{ width: '20%' }}>Item Name</th>
             <th style={{ width: '4%' }}>Qty</th>
             <th style={{ width: '4%' }}>Unit</th>
-            <th style={{ width: '10%' }}>Del. Terms</th>
-            <th style={{ width: '10%' }}>ETA</th>
+            <th style={{ width: '8%' }}>Del. Terms</th>
+            <th style={{ width: '8%' }}>ETA</th>
             <th style={{ width: '10%' }}>Sent To</th>
             <th style={{ width: '10%' }}>Supplier</th>
             <th style={{ width: '5%' }}></th>
