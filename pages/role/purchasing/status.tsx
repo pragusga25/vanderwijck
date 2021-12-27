@@ -41,12 +41,22 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     select: {
       status: true,
       date: true,
+      supplier:{
+        select:{
+          name: true
+        }
+      },
       parentItemLog: {
         select: {
           item: {
             select: {
               name: true,
               subcodeValue: true
+            }
+          },
+          transaction:{
+            select:{
+              id: true
             }
           }
         },
@@ -62,7 +72,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     name: log.parentItemLog.item.name+'',
     subcode: log.parentItemLog.item.subcodeValue+'',
     qty: log.quantity,
-    id: log.id
+    id: log.id,
+    transCode: log.parentItemLog.transaction.id,
+    supplierStatus: log.supplier?.name ?? '-',
   }));
 
   return {
