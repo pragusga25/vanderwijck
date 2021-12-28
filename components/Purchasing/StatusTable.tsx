@@ -26,7 +26,7 @@ const PurchasingStatusTable: React.FC<{ data: PurchasingStatusData[] }> = ({
             <th className="w-1/6">Item Name</th>
             <th className="w-1/12">Subcode</th>
             <th className="w-1/12">Quantity</th>
-            <th className="w-1/6">Supplier Status</th>
+            <th className="w-1/6">Supplier</th>
           </tr>
         </thead>
         <tbody>

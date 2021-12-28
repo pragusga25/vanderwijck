@@ -7,7 +7,7 @@ import { PurchaseItemLogRevision } from '@components/Purchasing/table/Purchasing
 import SupplierSearchBar from '@components/Purchasing/PurchasingSearchBar';
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
-import { Incoterms } from '@prisma/client';
+import { Incoterms, Status } from '@prisma/client';
 import { dateToTime } from '../../../../utils/funcs';
 
 export default function Page({ myChoices, mySupplierData, myPrItemLogs }) {
@@ -69,6 +69,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       id: true,
     },
   });
+  console.log(locs)
   const destinations = locs.map((loc) => loc.name);
   const myChoices = {
     PilihanDeliveryTerm: incoterms,
@@ -93,6 +94,11 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }));
 
   const prItemLogs = await prisma.priItemLog.findMany({
+    where:{
+      parentItemLog:{
+        status: Status.CREATING_PURCHASE_ORDER
+      }
+    },
     select: {
       id: true,
       date: true,
