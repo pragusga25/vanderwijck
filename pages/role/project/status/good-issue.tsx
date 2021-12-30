@@ -8,6 +8,7 @@ import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
 import { STATUS } from '@constants/index';
 import { dateToTime } from '@utils/funcs';
+import { Status } from '@prisma/client';
 
 export default function Page({ data }: { data: ProjectStatusData[] }) {
   const router = useRouter();
@@ -42,6 +43,13 @@ export default function Page({ data }: { data: ProjectStatusData[] }) {
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const itemLogs = await prisma.itemLog.findMany({
+    where: {
+      status: {
+        in: [Status.ISSUE_GOOD_SENT, Status.ISSUE_REQUEST_SENT, 
+          Status.CANCELLED, Status.CHECKOUT, 
+          Status.SELECTED_FOR_CHECKOUT, Status.DECLINED],
+      },
+    },
     select: {
       transactionId: true,
       rejectedReason: true,
