@@ -125,18 +125,20 @@ const Form: React.FC<{
     }
 
     setLoading(true);
-    await toast.promise(
-      axios.post(URL, {
-        dataPost,
-        requestedBy: vals.requestedBy as string,
-        approvedBy: vals.approvedBy as string,
-      }),
-      {
-        success: 'Data berhasil dibuat',
-        error: 'Data gagal dibuat',
-        loading: 'Membuat data...',
-      }
-    );
+    toast
+      .promise(
+        axios.post(URL, {
+          dataPost,
+          requestedBy: vals.requestedBy as string,
+          approvedBy: vals.approvedBy as string,
+        }),
+        {
+          success: 'Data berhasil dibuat',
+          error: 'Data gagal dibuat',
+          loading: 'Membuat data...',
+        }
+      )
+      .then(() => refreshData?.());
   };
 
   return (

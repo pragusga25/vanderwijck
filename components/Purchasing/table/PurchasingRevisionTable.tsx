@@ -39,7 +39,8 @@ const PurchaseListRevisionTable: React.FC<{
     );
   };
 
-  async function handlePost() {
+  async function handlePost(e) {
+    e.preventDefault();
     const allResult = getValues('e');
     const checkedResult: any[] = [];
     checkedIndex.forEach((bol, idx) => {
@@ -49,7 +50,8 @@ const PurchaseListRevisionTable: React.FC<{
     let isValid = true;
 
     checkedResult.forEach((d) => {
-      if (!d.eta || !d.sentTo || !d.deliveryTerm || !d.supplierName) isValid = false;
+      if (!d.eta || !d.sentTo || !d.deliveryTerm || !d.supplierName)
+        isValid = false;
     });
 
     if (!isValid) return toast.error('Please fill all fields');
@@ -60,9 +62,8 @@ const PurchaseListRevisionTable: React.FC<{
       delTerm: d.deliveryTerm as Incoterms,
       locationID: d.sentTo as string,
       quantity: Number(d.qty),
-      supplierID: d.supplierName
+      supplierID: d.supplierName,
     }));
-    console.log(dataPost);
 
     setLoading(true);
 
