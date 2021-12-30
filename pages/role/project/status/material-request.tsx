@@ -45,7 +45,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const itemLogs = await prisma.itemLog.findMany({
     where: {
       status: {
-        in: [Status.PURCHASE_REQUEST_SENT, Status.MATERIAL_REQUEST_SENT],
+        in: [Status.PURCHASE_REQUEST_SENT, Status.MATERIAL_REQUEST_SENT, 
+          Status.CREATING_PURCHASE_ORDER, Status.PURCHASE_ORDER_SENT, 
+          Status.DELIVERY, Status.DELIVERED, Status.DECLINED],
       },
     },
     select: {
