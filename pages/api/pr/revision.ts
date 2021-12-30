@@ -11,33 +11,21 @@ const handler: NextApiHandler = async (req, res) => {
       itemLogId: number;
       date: Date;
       delTerm: Incoterms;
-      sentTo: string;
+      locationID: string;
       quantity: number;
-      supplierName: string;
+      supplierID: string;
     }[] = body.datas;
 
     try {
       Promise.all(
         datas.map(async (data) => {
-          const loc = await prisma.location.findFirst({
-            where: {
-              name: data.sentTo,
-            },
-          });
-          const sup = await prisma.supplier.findFirst({
-            where:{
-              name: data.supplierName
-            }
-          })
-
-          if (loc) {
             await prisma.itemLog.update({
               where: {
                 id: data.itemLogId,
               },
               data: {
                 status: Status.DELIVERY,
-                locationId: loc.id,
+                locationId: Number(data.locationID),
                 quantity: data.quantity,
               },
             });
@@ -51,10 +39,10 @@ const handler: NextApiHandler = async (req, res) => {
                 date: data.date,
                 incoterm: data.delTerm,
                 quantity: data.quantity,
-                supplierId: sup.id,
+                supplierId: Number(data.supplierID),
               },
             });
-          }
+          
         })
       ).catch(() => {
         throw new Error('Gagal memproses data');
