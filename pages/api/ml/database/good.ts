@@ -17,7 +17,7 @@ const handler: NextApiHandler = async (req, res) => {
       const prLogIds = dataPost.map((d) => d.prItemLogId);
       const itemLogIds = dataPost.map((d) => d.itemLogId);
 
-      Promise.all(
+      await Promise.all(
         items.map((it) =>
           prisma.item.update({
             where: {

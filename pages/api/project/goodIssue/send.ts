@@ -32,7 +32,7 @@ const handler: NextApiHandler = async (req, res) => {
         data: dataFix,
       });
 
-      Promise.all(
+      await Promise.all(
         dataFix.map((d) =>
           prisma.item.update({
             where: {

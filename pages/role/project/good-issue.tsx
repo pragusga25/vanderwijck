@@ -5,6 +5,7 @@ import GoodIssueForm from '@components/general/form/GoodIssueForm';
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
 import { Item, Remark } from '@prisma/client';
+import { useState } from 'react';
 export default function Page({
   items,
   remarks,
@@ -13,14 +14,17 @@ export default function Page({
   remarks: Remark[];
 }) {
   const router = useRouter();
-
+  const [refresh, setRefresh] = useState(false);
   const data = items.map((item) => ({
     itemName: item.name,
     itemId: item.id + '',
     avl: item.avl,
   }));
 
-  const refreshData = () => router.replace(router.asPath);
+  const refreshData = () => {
+    setRefresh(!refresh);
+    router.replace(router.asPath);
+  };
 
   return (
     <Layout
@@ -49,7 +53,7 @@ export default function Page({
         </div>
         <GoodIssueForm
           data={data}
-          key={JSON.stringify(data)}
+          key={JSON.stringify(data) + new Date().getTime()}
           remarks={remarks}
           refreshData={refreshData}
         />
@@ -61,6 +65,8 @@ export default function Page({
 export const getServerSideProps: GetServerSideProps = async () => {
   const items = await prisma.item.findMany();
   const remarks = await prisma.remark.findMany();
+
+  console.log('REFRESSSHHHHHHH');
 
   return {
     props: {
