@@ -30,7 +30,7 @@ const handler: NextApiHandler = async (req, res) => {
         data: dataFix,
       });
 
-      Promise.all(
+      await Promise.all(
         dataFix.map((d) =>
           prisma.item.update({
             where: {
@@ -56,7 +56,7 @@ const handler: NextApiHandler = async (req, res) => {
     } catch (err) {
       res.status(500).json({
         message: 'Error',
-        object: err
+        object: err,
       });
     }
 
