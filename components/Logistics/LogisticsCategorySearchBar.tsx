@@ -26,6 +26,7 @@ const LogisticsCategorySearchBar: React.FC<{
     setSelectedCategory(val);
     setChoices(data ? data.find((e) => e.categoryId == val)?.choices ?? [] : []);
     setValue(fieldName, val);
+    setValue('e.itemName', '')
   }
   function onItemSelected(fieldName: string, val: string) {
     setValue(fieldName, val);
