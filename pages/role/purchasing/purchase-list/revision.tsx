@@ -3,12 +3,16 @@ import { useRouter } from 'next/router';
 import { BackButton } from '@components/general/button';
 import { useState } from 'react';
 import PurchaseListRevisionTable from '@components/Purchasing/table/PurchasingRevisionTable';
-import { PurchaseItemLogRevision } from '@components/Purchasing/table/PurchasingTypes';
+import {
+  PurchaseItemLogRevision,
+  PurchasingRevisionChoices,
+} from '@components/Purchasing/table/PurchasingTypes';
 import SupplierSearchBar from '@components/Purchasing/PurchasingSearchBar';
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
 import { Incoterms, Status } from '@prisma/client';
 import { dateToTime } from '../../../../utils/funcs';
+import { SelectObject } from '@components/general/form/SelectField';
 
 export default function Page({ myChoices, mySupplierData, myPrItemLogs }) {
   const router = useRouter();
@@ -46,8 +50,7 @@ export default function Page({ myChoices, mySupplierData, myPrItemLogs }) {
             Purchase List
           </h1>
         </div>
-        <div className="mb-4 md:mb-12">
-        </div>
+        <div className="mb-4 md:mb-12"></div>
         <div className="mb-4 md:mb-12">
           <PurchaseListRevisionTable
             data={shownData}
@@ -69,9 +72,14 @@ export const getServerSideProps: GetServerSideProps = async () => {
       id: true,
     },
   });
-  console.log(locs)
-  const destinations = locs.map((loc) => loc.name);
-  const myChoices = {
+  console.log(locs);
+  const destinations: SelectObject[] = locs.map((loc) => {
+    return {
+      text: loc.name,
+      value: String(loc.id),
+    };
+  });
+  const myChoices: PurchasingRevisionChoices = {
     PilihanDeliveryTerm: incoterms,
     PilihanTujuan: destinations,
   };
@@ -94,10 +102,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }));
 
   const prItemLogs = await prisma.priItemLog.findMany({
-    where:{
-      parentItemLog:{
-        status: Status.CREATING_PURCHASE_ORDER
-      }
+    where: {
+      parentItemLog: {
+        status: Status.CREATING_PURCHASE_ORDER,
+      },
     },
     select: {
       id: true,
@@ -112,14 +120,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
               category: true,
               name: true,
               ItemsOnSuppliers: {
-                select:{
+                select: {
                   supplier: {
                     select: {
-                      name:true
-                    }
-                  }
-                }
-              }
+                      name: true,
+                      id: true,
+                    },
+                  },
+                },
+              },
             },
           },
         },
@@ -129,16 +138,21 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
   });
 
-  const myPrItemLogs = prItemLogs.map((pr) => ({
+  const myPrItemLogs: PurchaseItemLogRevision[] = prItemLogs.map((pr) => ({
     projectNumber: '1367',
     date: dateToTime(new Date(pr.date)),
     category: pr.parentItemLog.item.category,
     itemName: pr.parentItemLog.item.name,
-    supplierName: pr.parentItemLog.item.ItemsOnSuppliers.map(e=> e.supplier.name),
     qty: pr.quantity + '',
     unit: pr.unit,
     prItemLogId: pr.id,
     itemLogId: pr.parentItemLog.id,
+    supplier: pr.parentItemLog.item.ItemsOnSuppliers.map((e) => {
+      return {
+        text: e.supplier.name,
+        value: String(e.supplier.id),
+      };
+    }),
   }));
 
   return {

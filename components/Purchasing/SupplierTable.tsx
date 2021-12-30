@@ -3,7 +3,7 @@ export interface PurchasingSupplierData {
   uniqid: string;
   itemType: number;
   itemName: string;
-  supplier: any;
+  supplier: string;
   location: any;
 }
 const PurchasingSupplierTable: React.FC<{ data: PurchasingSupplierData[] }> = ({

@@ -1,5 +1,5 @@
 import { LogisticsSelectPlainField } from '@components/general/form/LogisticsSelectPlainField';
-import { SelectFieldCategory } from '@components/general/form/SelectField';
+import { SelectFieldCategory, SelectObject } from '@components/general/form/SelectField';
 import { TextField } from '@components/general/form/TextField';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -21,12 +21,12 @@ export interface PurchaseItemLogRevision {
   prItemLogId?: number;
   itemLogId?: number;
   date?: string;
-  supplierName?: string[];
+  supplier?: SelectObject[];
 }
 
 export interface PurchasingRevisionChoices {
   PilihanDeliveryTerm: string[];
-  PilihanTujuan: string[];
+  PilihanTujuan: SelectObject[];
 }
 
 export const DummySupplierData: SupplierData[] = [

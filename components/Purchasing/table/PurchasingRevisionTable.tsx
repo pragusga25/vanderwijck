@@ -58,9 +58,9 @@ const PurchaseListRevisionTable: React.FC<{
       itemLogId: d.itemLogId as number,
       date: strToDate(d.eta),
       delTerm: d.deliveryTerm as Incoterms,
-      sentTo: d.sentTo as string,
+      locationID: d.sentTo as string,
       quantity: Number(d.qty),
-      supplierName: d.supplierName
+      supplierID: d.supplierName
     }));
     console.log(dataPost);
 
@@ -186,7 +186,7 @@ const Row: React.FC<{
         <LogisticsSelectPlainField
           className="w-full"
           onChange={handleChange}
-          choices={extractChoices(choices.PilihanTujuan)}
+          choices={choices.PilihanTujuan}
           defaultValue={''}
           fieldName="sentTo"
           withSelect
@@ -196,7 +196,7 @@ const Row: React.FC<{
         <LogisticsSelectPlainField
           className="w-full"
           onChange={handleChange}
-          choices={extractChoices(e.supplierName)}
+          choices={e.supplier}
           defaultValue={''}
           fieldName="supplierName"
           withSelect
