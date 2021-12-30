@@ -53,10 +53,22 @@ export default function Page({ data }) {
       .finally(() => setLoading(false));
   };
 
-  function handleCheckout() {
-    console.log('Checkout');
-    console.log(data.filter((e, idx) => checkedIndex[idx]));
-    router.push('/role/purchasing/purchase-list/revision');
+  function handleAcceptAll() {
+    const checkedData: any[] = data.filter((e, idx) => checkedIndex[idx]);
+    // console.log(checkedData);
+    if (checkedData.length == 0) {
+      router.push('/role/purchasing/purchase-list/revision');
+    } else {
+      toast
+        .promise(axios.post('/api/pr/pr-list/all', {datas: checkedData.map(e=>e.id)}), {
+          loading: 'Memproses data...',
+          success: 'Data berhasil diproses',
+          error: 'Terjadi kesalahan',
+        })
+        .then(() => router.push('/role/purchasing/purchase-list/revision'))
+        .catch(() => toast.error('Terjadi kesalahan'))
+        .finally(() => setLoading(false));
+    }
   }
 
   return (
@@ -81,7 +93,7 @@ export default function Page({ data }) {
           </div>
           <div className="flex">
             <div
-              onClick={handleCheckout}
+              onClick={handleAcceptAll}
               className="py-2 mr-8 px-8 bg-blue-venice cursor-pointer rounded text-sm text-white -end"
             >
               Accept
