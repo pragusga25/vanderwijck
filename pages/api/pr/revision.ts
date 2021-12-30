@@ -13,6 +13,7 @@ const handler: NextApiHandler = async (req, res) => {
       delTerm: Incoterms;
       sentTo: string;
       quantity: number;
+      supplierName: string;
     }[] = body.datas;
 
     try {
@@ -23,6 +24,11 @@ const handler: NextApiHandler = async (req, res) => {
               name: data.sentTo,
             },
           });
+          const sup = await prisma.supplier.findFirst({
+            where:{
+              name: data.supplierName
+            }
+          })
 
           if (loc) {
             await prisma.itemLog.update({
@@ -45,6 +51,7 @@ const handler: NextApiHandler = async (req, res) => {
                 date: data.date,
                 incoterm: data.delTerm,
                 quantity: data.quantity,
+                supplierId: sup.id,
               },
             });
           }

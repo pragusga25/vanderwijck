@@ -7,7 +7,7 @@ import { PurchaseItemLogRevision } from '@components/Purchasing/table/Purchasing
 import SupplierSearchBar from '@components/Purchasing/PurchasingSearchBar';
 import { GetServerSideProps } from 'next';
 import prisma from '@lib/prisma';
-import { Incoterms } from '@prisma/client';
+import { Incoterms, Status } from '@prisma/client';
 import { dateToTime } from '../../../../utils/funcs';
 
 export default function Page({ myChoices, mySupplierData, myPrItemLogs }) {
@@ -21,24 +21,6 @@ export default function Page({ myChoices, mySupplierData, myPrItemLogs }) {
     Array(data.length).fill(false)
   );
 
-  function loadPurchaseRequest(supplierName: string, itemName: string) {
-    setCheckedIndex(Array(data.length).fill(false));
-    setShownData(
-      data.filter(
-        (v) =>
-          v.itemName.includes(itemName) &&
-          supplierData.findIndex(
-            (w) =>
-              w.supplierName == supplierName && w.itemNames.includes(v.itemName)
-          ) >= 0
-      )
-    );
-  }
-
-  const filterBySupplier = (data) => {
-    console.log(data);
-    loadPurchaseRequest(data.e.categoryId || '', data.e.itemName || '');
-  };
   function handleChecked(idx: number, check: boolean) {
     const res = [...checkedIndex];
     res[idx] = check;
@@ -65,11 +47,6 @@ export default function Page({ myChoices, mySupplierData, myPrItemLogs }) {
           </h1>
         </div>
         <div className="mb-4 md:mb-12">
-          <SupplierSearchBar
-            data={mySupplierData}
-            onSearch={filterBySupplier}
-            placeholder="Supplier"
-          />
         </div>
         <div className="mb-4 md:mb-12">
           <PurchaseListRevisionTable
@@ -92,6 +69,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       id: true,
     },
   });
+  console.log(locs)
   const destinations = locs.map((loc) => loc.name);
   const myChoices = {
     PilihanDeliveryTerm: incoterms,
@@ -116,6 +94,11 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }));
 
   const prItemLogs = await prisma.priItemLog.findMany({
+    where:{
+      parentItemLog:{
+        status: Status.CREATING_PURCHASE_ORDER
+      }
+    },
     select: {
       id: true,
       date: true,
@@ -128,6 +111,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
             select: {
               category: true,
               name: true,
+              ItemsOnSuppliers: {
+                select:{
+                  supplier: {
+                    select: {
+                      name:true
+                    }
+                  }
+                }
+              }
             },
           },
         },
@@ -142,6 +134,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     date: dateToTime(new Date(pr.date)),
     category: pr.parentItemLog.item.category,
     itemName: pr.parentItemLog.item.name,
+    supplierName: pr.parentItemLog.item.ItemsOnSuppliers.map(e=> e.supplier.name),
     qty: pr.quantity + '',
     unit: pr.unit,
     prItemLogId: pr.id,
