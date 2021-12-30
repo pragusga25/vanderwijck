@@ -17,7 +17,7 @@ const handler: NextApiHandler = async (req, res) => {
     }[] = body.datas;
 
     try {
-      Promise.all(
+      await Promise.all(
         datas.map((data) =>
           prisma.itemLog.update({
             where: {
@@ -32,7 +32,7 @@ const handler: NextApiHandler = async (req, res) => {
         )
       );
 
-      Promise.all(
+      await Promise.all(
         datas.map((data) =>
           prisma.priItemLog.update({
             where: {
