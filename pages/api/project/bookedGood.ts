@@ -66,6 +66,12 @@ const handler: NextApiHandler = async (req, res) => {
             booked: {
               decrement: dataPost.quantity,
             },
+            avl: {
+              increment: dataPost.quantity,
+            },
+            quantity: {
+              increment: dataPost.quantity,
+            },
           },
         });
       }
