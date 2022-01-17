@@ -184,7 +184,9 @@ export default function Page({
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const itemLogs = await prisma.itemLog.findMany({
     where: {
-      status: Status.ISSUE_REQUEST_SENT,
+      status: {
+        in: [Status.ISSUE_REQUEST_SENT, Status.CANCELLED],
+      },
     },
     select: {
       id: true,
@@ -206,6 +208,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           name: true,
         },
       },
+      rejectedReason: true,
     },
   });
 
@@ -218,6 +221,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     remarks: log.remark.name,
     id: log.id,
     itemId: log.item.id,
+    rejectedReason: log.rejectedReason ?? '',
   }));
 
   return {
