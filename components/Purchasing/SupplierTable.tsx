@@ -9,7 +9,6 @@ export interface PurchasingSupplierData {
 const PurchasingSupplierTable: React.FC<{ data: PurchasingSupplierData[] }> = ({
   data,
 }) => {
-  console.log(data)
   return (
     <div
       style={{ minWidth: '900px' }}

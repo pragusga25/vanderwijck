@@ -29,7 +29,6 @@ export default function Page({ data }) {
     const res = [...checkedIndex];
     res[idx] = check;
     setCheckedIndex(res);
-    console.log(check);
   }
 
   async function handleDecline(idx: number) {
@@ -55,16 +54,21 @@ export default function Page({ data }) {
 
   function handleAcceptAll() {
     const checkedData: any[] = data.filter((e, idx) => checkedIndex[idx]);
-    // console.log(checkedData);
+
     if (checkedData.length == 0) {
       router.push('/role/purchasing/purchase-list/revision');
     } else {
       toast
-        .promise(axios.post('/api/pr/pr-list/all', {datas: checkedData.map(e=>e.id)}), {
-          loading: 'Memproses data...',
-          success: 'Data berhasil diproses',
-          error: 'Terjadi kesalahan',
-        })
+        .promise(
+          axios.post('/api/pr/pr-list/all', {
+            datas: checkedData.map((e) => e.id),
+          }),
+          {
+            loading: 'Memproses data...',
+            success: 'Data berhasil diproses',
+            error: 'Terjadi kesalahan',
+          }
+        )
         .then(() => router.push('/role/purchasing/purchase-list/revision'))
         .catch(() => toast.error('Terjadi kesalahan'))
         .finally(() => setLoading(false));
@@ -154,8 +158,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
       },
     },
   });
-
-  console.log(prItemLogs);
 
   const data = prItemLogs.map((log) => ({
     id: log.id,

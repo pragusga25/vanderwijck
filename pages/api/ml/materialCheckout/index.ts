@@ -6,8 +6,12 @@ const handler: NextApiHandler = async (req, res) => {
   if (req.method === 'POST') {
     const { body } = req;
 
-    const dataPost: { id: number; quantity: number; itemId: number }[] =
-      body.dataPost;
+    const dataPost: {
+      id: number;
+      quantity: number;
+      itemId: number;
+      rejectedReason?: string;
+    }[] = body.dataPost;
     const isDecline: boolean = body.isDecline;
     try {
       await prisma.itemLog.updateMany({
@@ -18,28 +22,9 @@ const handler: NextApiHandler = async (req, res) => {
         },
         data: {
           status: isDecline ? Status.DECLINED : Status.SELECTED_FOR_CHECKOUT,
+          rejectedReason: isDecline ? body.rejectedReason : null,
         },
       });
-
-      console.log(isDecline, 'ISCCDDD');
-
-      // if (!isDecline)
-      //   Promise.all(
-      //     dataPost.map((d) =>
-      //       prisma.item.update({
-      //         where: {
-      //           id: d.itemId,
-      //         },
-      //         data: {
-      //           avl: {
-      //             decrement: d.quantity,
-      //           },
-      //         },
-      //       })
-      //     )
-      //   ).then(() => {
-      //     console.log('Successfully');
-      //   });
 
       res.status(200).json({
         status: 'success',

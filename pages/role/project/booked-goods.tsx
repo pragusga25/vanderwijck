@@ -52,9 +52,6 @@ export default function Page({
   async function dummyOnCancel(x: ProjectBookedGoodData) {
     if (loading) return;
 
-    // console.log(x);
-    // return;
-
     setLoading(true);
     await toast
       .promise(

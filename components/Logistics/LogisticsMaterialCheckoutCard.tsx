@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 export interface LogisticsMaterialCheckoutCardData {
   projectNo: string;
   approvedBy: string;
@@ -16,17 +16,13 @@ export interface LogisticsMaterialCheckoutCardProps {
   index: number;
   isChecked: boolean;
   handleChecked: (idx: number, check: boolean) => void;
-  handleDecline: (idx: number) => void;
+  handleDecline: (idx: number, rejectedReason?: string) => void;
 }
 const LogisticsMaterialCheckoutCard: React.FC<
   LogisticsMaterialCheckoutCardProps
-> = ({
-  data,
-  handleChecked,
-  handleDecline,
-  index,
-  isChecked,
-}) => {
+> = ({ data, handleChecked, handleDecline, index, isChecked }) => {
+  const ref = useRef<HTMLInputElement>(null);
+
   return (
     <div
       style={{ borderBottom: '5px solid #C4C4C4' }}
@@ -52,18 +48,23 @@ const LogisticsMaterialCheckoutCard: React.FC<
         <h3>Qty: {data.qty}</h3>
         <div className="flex justify-between w-full items-center">
           <h3>Remarks: {data.remarks}</h3>
-          <div
-            onClick={() => {
-              !isChecked && handleDecline(index);
-            }}
-            className={`px-2.5 bg-gray-400 font-medium rounded text-white py-1 ${
-              isChecked ? 'cursor-not-allowed' : 'cursor-pointer'
-            }`}
-          >
-            Decline
+          <div className="flex items-center">
+            <input
+              className="border-2 border-gray-400 mr-2 p-1 rounded md:w-64"
+              ref={ref}
+            />
+            <div
+              onClick={() => {
+                !isChecked && handleDecline(index, ref?.current?.value);
+              }}
+              className={`px-2.5 bg-gray-400 font-medium rounded text-white py-1 ${
+                isChecked ? 'cursor-not-allowed' : 'cursor-pointer'
+              }`}
+            >
+              Decline
+            </div>
           </div>
         </div>
-        {data.rejectedReason != '' && <h3>Cancelled Reason: {data.rejectedReason}</h3>}
       </div>
     </div>
   );

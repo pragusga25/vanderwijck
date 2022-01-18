@@ -35,9 +35,8 @@ const seed = async () => {
 };
 
 seed()
-  .then(() => console.log('Seeding success!'))
+  .then(() => {})
   .catch((e) => {
-    console.error(e);
     process.exit(1);
   })
   .finally(async () => {

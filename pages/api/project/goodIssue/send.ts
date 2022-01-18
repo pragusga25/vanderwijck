@@ -26,8 +26,6 @@ const handler: NextApiHandler = async (req, res) => {
         transactionId,
       }));
 
-      console.log(dataFix);
-
       await prisma.itemLog.createMany({
         data: dataFix,
       });
@@ -45,9 +43,7 @@ const handler: NextApiHandler = async (req, res) => {
             },
           })
         )
-      ).then(() => {
-        console.log('Successfully');
-      });
+      ).then(() => {});
 
       res.status(200).json({
         status: 'success',

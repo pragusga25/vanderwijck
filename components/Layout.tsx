@@ -111,15 +111,13 @@ export type roleType = 'project' | 'logistics' | 'purchasing';
 
 const DropDown: React.FC<{ active: roleType }> = ({ active }) => {
   const [show, setShow] = useState<boolean>(false);
-  useEffect(() => {
-    console.log(show);
-  }, [show]);
+  useEffect(() => {}, [show]);
   const data = ['project', 'logistics', 'purchasing'];
   const slug = ['project', 'material-logistics', 'purchasing'];
   const res = data.map((e, i) => {
-    if (e == active) return <div key={"dropdown-"+i}></div>;
+    if (e == active) return <div key={'dropdown-' + i}></div>;
     return (
-      <Link key={"dropdown-"+i} href={'/role/' + slug[i]}>
+      <Link key={'dropdown-' + i} href={'/role/' + slug[i]}>
         <div
           style={{ borderTop: '2px solid white' }}
           className="text-white capitalize sm:text-xl pl-4 sm:pl-0 sm:pr-4 md:pr-5 md:text-2xl py-1.5"
@@ -128,7 +126,7 @@ const DropDown: React.FC<{ active: roleType }> = ({ active }) => {
         </div>
       </Link>
     );
-  })
+  });
   return (
     <div
       onClick={() => setShow(!show)}
@@ -138,14 +136,18 @@ const DropDown: React.FC<{ active: roleType }> = ({ active }) => {
       <div
         style={{ backgroundColor: '#C4C4C4' }}
         className={`absolute hidden sm:block  w-full z-30 left-0 top-10 sm:top-12 pt-2 rounded-b-lg text-right transform ease-in-out duration-500 ${
-          show ? ' max-h-40 scale-y-100 -translate-y-0 opacity-100' : ' max-h-0 scale-y-0 -translate-y-1/4 opacity-0'
+          show
+            ? ' max-h-40 scale-y-100 -translate-y-0 opacity-100'
+            : ' max-h-0 scale-y-0 -translate-y-1/4 opacity-0'
         }`}
       >
         {res}
       </div>
       <div
         className={`absolute w-full bg-blue-venice sm:hidden z-30 left-0 top-10 sm:top-12 pt-2 rounded-b-lg text-left transform ease-in-out duration-500 ${
-          show ? ' max-h-40 scale-y-100 -translate-y-0 opacity-100' : ' max-h-0 scale-y-0 -translate-y-1/4 opacity-0'
+          show
+            ? ' max-h-40 scale-y-100 -translate-y-0 opacity-100'
+            : ' max-h-0 scale-y-0 -translate-y-1/4 opacity-0'
         }`}
       >
         {res}

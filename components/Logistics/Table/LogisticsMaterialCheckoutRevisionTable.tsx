@@ -84,8 +84,7 @@ const LogisticsMaterialCheckoutRevision: React.FC<{
       quantity: Number(d.qty),
       oldQty: Number(d.oldQty),
     }));
-    // console.log(dataPost);
-    // return;
+
     try {
       setLoading(true);
       await toast.promise(

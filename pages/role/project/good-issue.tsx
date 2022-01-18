@@ -66,8 +66,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const items = await prisma.item.findMany();
   const remarks = await prisma.remark.findMany();
 
-  console.log('REFRESSSHHHHHHH');
-
   return {
     props: {
       items,

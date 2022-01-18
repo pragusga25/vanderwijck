@@ -46,9 +46,7 @@ const handler: NextApiHandler = async (req, res) => {
             },
           })
         )
-      ).then(() => {
-        console.log('Successfully');
-      });
+      ).then(() => {});
 
       res.status(200).json({
         status: 'success',
