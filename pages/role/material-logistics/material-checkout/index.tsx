@@ -1,9 +1,5 @@
-import Head from 'next/head';
 import Layout from '@components/Layout';
-import Button from '@components/general/button';
 import { useRouter } from 'next/router';
-// import {Bg} from "@components/general/button"
-import { roleType } from '@components/Layout';
 import { BackButton } from '@components/general/button';
 import LogisticsMaterialCheckoutCard, {
   LogisticsMaterialCheckoutCardData,
@@ -39,16 +35,17 @@ export default function Page({
     setCheckedIndex(res);
   }
 
-  async function handleDecline(idx: number) {
-    console.log('Decline this Item');
-    console.log(data[idx]);
+  async function handleDecline(idx: number, rejectedReason?: string) {
     try {
+      if (!rejectedReason) return toast.error('Please input a reason');
+
       await axios.post('/api/ml/materialCheckout', {
         dataPost: [
           {
             id: data[idx].id,
             quantity: Number(data[idx].qty),
             itemId: data[idx].itemId,
+            rejectedReason,
           },
         ],
         isDecline: true,
@@ -62,8 +59,6 @@ export default function Page({
   }
 
   async function handleCheckout() {
-    console.log('Checkout');
-    console.log(data.filter((e, idx) => checkedIndex[idx]));
     const filteredData = data.filter((e, idx) => checkedIndex[idx]);
 
     if (filteredData.length === 0)
@@ -76,7 +71,6 @@ export default function Page({
       const avl = Number(d.avl);
       const quantity = Number(d.qty);
 
-      console.log(avl, quantity);
       if (quantity > avl) {
         avlExceed = true;
         toast.error('Jumlah yang di-checkout melebihi stok yang tersedia');
@@ -94,8 +88,6 @@ export default function Page({
         dataPost,
         isDecline: false,
       });
-
-      console.log('HOLY FUCKK');
 
       toast.success('Checkout Success');
       router.reload();
@@ -184,7 +176,9 @@ export default function Page({
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const itemLogs = await prisma.itemLog.findMany({
     where: {
-      status: Status.ISSUE_REQUEST_SENT,
+      status: {
+        in: [Status.ISSUE_REQUEST_SENT, Status.CANCELLED],
+      },
     },
     select: {
       id: true,
@@ -206,6 +200,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
           name: true,
         },
       },
+      rejectedReason: true,
     },
   });
 
@@ -218,6 +213,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     remarks: log.remark.name,
     id: log.id,
     itemId: log.item.id,
+    rejectedReason: log.rejectedReason ?? '',
   }));
 
   return {

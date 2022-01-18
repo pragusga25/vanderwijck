@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       id: true,
     },
   });
-  console.log(locs);
+
   const destinations: SelectObject[] = locs.map((loc) => {
     return {
       text: loc.name,

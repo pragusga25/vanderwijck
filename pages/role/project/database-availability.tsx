@@ -114,8 +114,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
     })),
   }));
 
-  console.log(data, 'DATAAA');
-
   return {
     props: {
       categories,
