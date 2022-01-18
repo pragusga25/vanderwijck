@@ -2,6 +2,14 @@ import { Category } from '@prisma/client';
 
 export const items = [
   {
+    code: 'AM1',
+    quantity: 10,
+    avl: 10,
+    name: 'SW Hydrophore Pump Davey XP35P8',
+    category: Category.AUX_MACHINERY,
+    subcodeValue: '08/21',
+  },
+  {
     code: 'P01',
     quantity: 31,
     avl: 31,

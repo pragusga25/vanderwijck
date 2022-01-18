@@ -26,4 +26,16 @@ export const suppliers = [
     name: 'PT. Asia Pratama',
     country: 'Indonesia',
   },
+  {
+    id: 6,
+    category: [Category.AUX_MACHINERY],
+    name: 'PT. Partner Usaha Bersama',
+    country: 'Indonesia',
+  },
+  {
+    id: 7,
+    category: [Category.AUX_MACHINERY],
+    name: 'PT. Batam Niaga Perkasa',
+    country: 'Indonesia',
+  },
 ];

@@ -45,9 +45,9 @@ export default function Page({
             id: data[idx].id,
             quantity: Number(data[idx].qty),
             itemId: data[idx].itemId,
-            rejectedReason,
           },
         ],
+        rejectedReason,
         isDecline: true,
       });
 
