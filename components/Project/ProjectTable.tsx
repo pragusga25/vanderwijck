@@ -7,14 +7,17 @@ export interface ProjectStatusData {
   subcode: string;
   qty: string;
   unit: string;
-  requestedBy?:string;
+  requestedBy?: string;
   approvedBy: string;
   status: string;
-  rejectedReason?:string;
+  rejectedReason?: string;
 }
 const StatusTable: React.FC<{ data: ProjectStatusData[] }> = ({ data }) => {
   return (
-    <div style={{ minWidth: '900px' }} className="w-full px-1 overflow-x-auto text-center">
+    <div
+      style={{ minWidth: '900px' }}
+      className="w-full px-1 overflow-x-auto text-center"
+    >
       <table>
         <thead className="text-sm">
           <tr>
@@ -28,7 +31,7 @@ const StatusTable: React.FC<{ data: ProjectStatusData[] }> = ({ data }) => {
             <th style={{ width: '10%' }}>Requested By</th>
             <th style={{ width: '10%' }}>Approved By</th>
             <th style={{ width: '10%' }}>Status</th>
-            <th style={{ width: '10%' }}>Reason</th>
+            <th style={{ width: '10%' }}>Remarks/Notes</th>
           </tr>
         </thead>
         <tbody>
@@ -45,7 +48,9 @@ const StatusTable: React.FC<{ data: ProjectStatusData[] }> = ({ data }) => {
                 <td className="border-black border">{e.requestedBy ?? ''}</td>
                 <td className="border-black border">{e.approvedBy}</td>
                 <td className="border-black border">{e.status}</td>
-                <td className="border-black border">{e.rejectedReason ?? ''}</td>
+                <td className="border-black border">
+                  {e.rejectedReason ?? ''}
+                </td>
               </tr>
             );
           })}

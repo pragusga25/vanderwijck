@@ -45,9 +45,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const itemLogs = await prisma.itemLog.findMany({
     where: {
       status: {
-        in: [Status.PURCHASE_REQUEST_SENT, Status.MATERIAL_REQUEST_SENT, 
-          Status.CREATING_PURCHASE_ORDER, Status.PURCHASE_ORDER_SENT, 
-          Status.DELIVERY, Status.DELIVERED, Status.DECLINED],
+        in: [
+          Status.PURCHASE_REQUEST_SENT,
+          Status.MATERIAL_REQUEST_SENT,
+          Status.CREATING_PURCHASE_ORDER,
+          Status.PURCHASE_ORDER_SENT,
+          Status.DELIVERY,
+          Status.DELIVERED,
+          Status.DECLINED,
+        ],
       },
     },
     select: {
@@ -56,6 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       quantity: true,
       unit: true,
       status: true,
+      rejectedReason: true,
       item: {
         select: {
           name: true,
@@ -83,6 +90,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     requestedBy: log.transaction.requestedBy ?? 'Iqbal Baihaqi',
     status: STATUS[log.status],
     date: dateToTime(new Date(log.date)),
+    rejectedReason: log.rejectedReason,
   }));
 
   return {

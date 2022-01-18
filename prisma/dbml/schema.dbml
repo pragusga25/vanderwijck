@@ -115,6 +115,7 @@ Enum Category {
   PIPE
   FITTING
   VALVES
+  AUX_MACHINERY
 }
 
 Enum Status {

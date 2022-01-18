@@ -1,8 +1,8 @@
 -- CreateEnum
-CREATE TYPE "Category" AS ENUM ('PIPE', 'FITTING', 'VALVES');
+CREATE TYPE "Category" AS ENUM ('PIPE', 'FITTING', 'VALVES', 'AUX_MACHINERY');
 
 -- CreateEnum
-CREATE TYPE "Status" AS ENUM ('ISSUE_REQUEST_SENT', 'MATERIAL_REQUEST_SENT', 'PURCHASE_REQUEST_SENT', 'CHECKOUT', 'CREATING_PURCHASE_ORDER', 'PURCHASE_ORDER_SENT', 'DELIVERY', 'DELIVERED', 'ISSUE_GOOD_SENT', 'CANCELLED', 'SELECTED_FOR_CHECKOUT', 'BOOK_REQUEST', 'DECLINED');
+CREATE TYPE "Status" AS ENUM ('ISSUE_REQUEST_SENT', 'MATERIAL_REQUEST_SENT', 'PURCHASE_REQUEST_SENT', 'CHECKOUT', 'CREATING_PURCHASE_ORDER', 'PURCHASE_ORDER_SENT', 'DELIVERY', 'DELIVERED', 'ISSUE_GOOD_SENT', 'CANCELLED', 'SELECTED_FOR_CHECKOUT', 'BOOK_REQUEST', 'DECLINED', 'BOOK_CANCELLED');
 
 -- CreateEnum
 CREATE TYPE "Incoterms" AS ENUM ('FCA', 'CIF', 'DEP');
@@ -32,14 +32,14 @@ CREATE TABLE "ItemLog" (
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "remarkId" INTEGER NOT NULL,
     "locationId" INTEGER,
-    "transactionId" INTEGER NOT NULL,
+    "transactionId" TEXT NOT NULL,
 
     CONSTRAINT "ItemLog_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Transaction" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "requestedBy" TEXT NOT NULL,
     "approvedBy" TEXT,
     "status" "Status" NOT NULL,
@@ -56,6 +56,7 @@ CREATE TABLE "PriItemLog" (
     "quantity" INTEGER NOT NULL,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "incoterm" "Incoterms" NOT NULL,
+    "supplierId" INTEGER,
     "purchaseRequestId" INTEGER NOT NULL,
     "parentItemLogId" INTEGER NOT NULL,
 
@@ -147,6 +148,9 @@ ALTER TABLE "ItemLog" ADD CONSTRAINT "ItemLog_transactionId_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PriItemLog" ADD CONSTRAINT "PriItemLog_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "PriItemLog" ADD CONSTRAINT "PriItemLog_purchaseRequestId_fkey" FOREIGN KEY ("purchaseRequestId") REFERENCES "PurchaseRequest"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
