@@ -160,7 +160,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     databases.push({
       itemName: it.parentItemLog.item.name,
       qty: it.quantity + '',
-      unit: it.parentItemLog.item.category === Category.PIPE ? 'meter' : 'pcs',
+      // unit: it.parentItemLog.item.category === Category.PIPE ? 'meter' : 'pcs',
+      unit: 'pcs',
       warehouse: it.parentItemLog.location?.name ?? 'Warehouse Tanjung Riau',
       transCode: it.parentItemLog.transactionId + '',
       projectNumber: '1367',
