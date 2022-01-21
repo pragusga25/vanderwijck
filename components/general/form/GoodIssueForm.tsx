@@ -104,7 +104,8 @@ const Form: React.FC<{
             .find((d) => d.itemId === itemId)
             ?.itemName?.toLocaleLowerCase() ?? '';
 
-        const unit = itemName?.startsWith('pipe') ? 'm' : 'pcs';
+        // const unit = itemName?.startsWith('pipe') ? 'm' : 'pcs';
+        const unit = 'pcs';
 
         dataPost.push({
           quantity: Number(quantity as string),
